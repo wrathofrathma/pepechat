@@ -2,17 +2,14 @@
   <router-view></router-view>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-})
+<script setup lang="ts">
 </script>
 
 <style>
+#app {
+  @apply bg-gray-700;
+  @apply w-screen;
+  @apply h-screen;
+  @apply text-white;
+}
 </style>
