@@ -5,6 +5,8 @@ export default createStore({
     state: {
         username: "Some username",
         avatar: "",
+        uuid: "",
+        socket: null,
         baseURL: "http://localhost:3000",
     },
     mutations: {
@@ -16,6 +18,9 @@ export default createStore({
         },
         setUUID(state: any, uuid: string) {
             state.uuid = uuid;
+        },
+        setSocket(state: any, socket: WebSocket) {
+            state.socket = socket;
         },
     },
     actions: {
