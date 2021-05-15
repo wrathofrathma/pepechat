@@ -11,5 +11,5 @@
 
 <script setup lang="ts">
 import TopBar from "@/components/Header.vue";
-import RoomList from "@/components/RoomList.vue"
+import RoomList from "@/components/RoomIndex/RoomList.vue"
 </script>

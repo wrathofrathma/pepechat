@@ -73,11 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import TextInput from "@/components/TextInput.vue";
-import VButton from "@/components/VButton.vue"
+import TextInput from "@/components/atomic/TextInput.vue";
+import VButton from "@/components/atomic/VButton.vue"
 import {computed, ref} from "vue";
 import {useStore} from "vuex";
-import HTTP from "../http";
+import HTTP from "../../http";
 import {useRouter} from "vue-router";
 
 const store = useStore();
@@ -100,6 +100,7 @@ const createRoom = async () => {
         name: roomName.value
     })
     .then((res) => {
+        console.log(res.data)
         const {id} = res.data;
         router.push(id)
     })

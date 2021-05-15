@@ -6,9 +6,12 @@
         </div>
         <!-- Rooms list -->
         <div class="flex flex-col overflow-y-scroll roomlist">
-            <div v-for="room in rooms.length" class="p-2" :class="[room % 2 === 0 ? 'bg-gray-700' : 'bg-gray-800']">
-                {{rooms[room-1].name}}
-            </div>
+            <room-row 
+            v-for="room in rooms.length"
+            :class="[room % 2 === 0 ? 'bg-gray-700' : 'bg-gray-800']"
+            :room="rooms[room-1]"
+            >
+            </room-row>
         </div>
         <!-- Create room -->
         <create-room></create-room>
@@ -16,7 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import CreateRoom from "@/components/CreateRoom.vue"
+import CreateRoom from "@/components/RoomIndex/CreateRoom.vue"
+import RoomRow from "@/components/RoomIndex/RoomRow.vue";
+
 import {useStore} from "vuex";
 import {computed} from "vue";
 

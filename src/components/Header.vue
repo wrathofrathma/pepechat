@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import Avatar from "@/components/Avatar.vue";
-import VButton from "@/components/VButton.vue"
+import Avatar from "@/components/atomic/Avatar.vue";
+import VButton from "@/components/atomic/VButton.vue"
 
 import {useStore} from "vuex";
 import {computed} from "vue";

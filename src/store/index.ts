@@ -1,6 +1,6 @@
 import {createStore} from 'vuex';
 import rooms from "./rooms";
-import {RoomIndex} from "../scripts/types";
+import type {RoomIndex} from "../scripts/types";
 
 export default createStore({
     strict: true,

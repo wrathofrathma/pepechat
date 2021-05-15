@@ -8,6 +8,6 @@ export type RoomEntry = {
     locked: Boolean,
     users: Array<String>,
     lastActive: Number
-}
+};
 
 export type RoomIndex = {[key: string]: RoomEntry};
