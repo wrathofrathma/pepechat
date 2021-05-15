@@ -7,4 +7,4 @@ import store from './store';
 
 sync(store, router);
 
-createApp(App).use(router).mount('#app')
+createApp(App).use(router).use(store).mount('#app')
