@@ -5,7 +5,7 @@ export default createStore({
     state: {
         username: "Some username",
         avatar: "",
-        uuid: ""
+        baseURL: "http://localhost:3000",
     },
     mutations: {
         setAvatar(state: any, avatar: string) {
