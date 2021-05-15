@@ -1,5 +1,10 @@
 import store from "../store";
+import {RoomIndex, RoomEntry} from "../scripts/types";
 
+/**
+ * This is called when the server sends us our updated user credentials (username, avatar, uuid).
+ * @param {Object} payload 
+ */
 function onCredentials(payload: {username: string, avatar: string, uuid: string}) {
     const {username, avatar, uuid} = payload;
     if (username) {
@@ -11,6 +16,12 @@ function onCredentials(payload: {username: string, avatar: string, uuid: string}
     if (uuid) {
         store.commit("setUUID", uuid);
     }
+}
+
+function onRoomIndex(payload: {rooms: RoomIndex}) {
+    const {rooms} = payload;
+    console.log(rooms)
+    store.commit("setRooms", rooms);
 }
 
 /**
@@ -26,6 +37,10 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
             onCredentials(data.payload);
             break;
     
+        case "rooms/index":
+            onRoomIndex(data.payload);
+            break;
+
         default:
             break;
     }
