@@ -18,9 +18,18 @@ function onCredentials(payload: {username: string, avatar: string, uuid: string}
     }
 }
 
+/**
+ * Update the JWT token so our REST requests match our session id.
+ * @param payload Data payload containing the user's JWT token.
+ */
+function onToken(payload: {token: string}) {
+    const {token} = payload;
+    store.commit("setToken", token);
+    console.log("Token", token)
+}
+
 function onRoomIndex(payload: {rooms: RoomIndex}) {
     const {rooms} = payload;
-    console.log(rooms)
     store.commit("setRooms", rooms);
 }
 
@@ -31,13 +40,17 @@ function onRoomIndex(payload: {rooms: RoomIndex}) {
  */
 function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
     const data = JSON.parse(ev.data);
-
-    switch (data.type) {
+    console.log(data)
+    switch (data.event) {
         case "credentials":
             onCredentials(data.payload);
             break;
+        
+        case "token":
+            onToken(data.payload);
+            break;
     
-        case "rooms/index":
+        case "room/index":
             onRoomIndex(data.payload);
             break;
 

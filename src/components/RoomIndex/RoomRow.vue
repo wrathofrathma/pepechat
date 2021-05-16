@@ -30,10 +30,12 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps} from "vue";
+import {defineProps, ref} from "vue";
 import VButton from "@/components/atomic/VButton.vue";
 import type {RoomEntry} from "../../scripts/types";
 import {useRouter} from "vue-router";
+import {useStore} from "vuex";
+import HTTP from "../../http";
 
 const props = defineProps({
     room: {
@@ -43,8 +45,18 @@ const props = defineProps({
 })
 
 const router = useRouter();
+const store = useStore();
+const password = ref("")
 
-const joinRoom = () => {
-    router.push(props.room.id)
+const joinRoom = async () => {
+    console.log(props.room.id)
+    await HTTP().post(`room/join/${props.room.id}`, {password})
+        .then(() => {
+            router.push(props.room.id)
+        })
+        .catch((error) => {
+            // Either connection error or failed to join the room for some reason
+            console.error(error);
+        })
 }
 </script>

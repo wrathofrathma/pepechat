@@ -10,7 +10,8 @@ export default createStore({
         uuid: "",
         socket: null,
         baseURL: "http://localhost:3000",
-        rooms: {} 
+        rooms: {},
+        token: ""
     },
     mutations: {
         setAvatar(state: any, avatar: string) {
@@ -27,6 +28,9 @@ export default createStore({
         },
         setRooms(state: any, rooms: any) {
             state.rooms = rooms;
+        },
+        setToken(state: any, token: string) {
+            state.token = token;
         }
     },
     getters: {

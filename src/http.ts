@@ -6,5 +6,8 @@ export default function () {
     return axios.create({
         baseURL: store.state.baseURL,
         timeout: 8000,
+        headers: {
+            Authorization: store.state.token
+        }
     })
 }
