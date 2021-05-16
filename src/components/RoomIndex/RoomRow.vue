@@ -50,7 +50,7 @@ const password = ref("")
 
 const joinRoom = async () => {
     console.log(props.room.id)
-    await HTTP().post(`room/join/${props.room.id}`, {password})
+    await HTTP().post(`room/join/${props.room.id}`, {password: password.value})
         .then(() => {
             router.push(props.room.id)
         })
