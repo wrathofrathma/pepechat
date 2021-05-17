@@ -10,7 +10,12 @@ const routes: Array<RouteRecordRaw> = [
   {
       path: '/:id',
       name: 'Chatroom',
-      component: () => import('../views/Chatroom.vue')
+      component: () => import('../views/Chatroom.vue'),
+  }, 
+  {
+    path: '/:id/knock',
+    name: "Chatroom.knock",
+    component: () => import("../views/KnockKnock.vue")
   }
   // {
   //   path: '/about',
