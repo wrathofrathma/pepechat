@@ -16,5 +16,5 @@ export type Message = {
     uuid: String
     userId: String,
     contents: String,
-    timestamp: Number,
+    timestamp: number,
 }
