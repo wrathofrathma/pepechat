@@ -1,5 +1,5 @@
 <template>
-    <img :src="src" class="w-16 h-16 rounded-full">
+    <img :src="src" class="rounded-full">
 </template>
 
 <script setup lang="ts">
