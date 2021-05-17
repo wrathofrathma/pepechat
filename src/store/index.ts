@@ -67,6 +67,11 @@ export default createStore({
                 return state.roomMessages[roomId];
             return [];
         },
+        roomName: (state: any) => (roomId: string) => {
+            if (state.rooms[roomId])
+                return state.rooms[roomId].name;
+            return "";
+        },
         username: (state: any) => (uuid: string) => {
             if (state.users[uuid]) {
                 return state.users[uuid].username;

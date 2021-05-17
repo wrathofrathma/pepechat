@@ -7,7 +7,7 @@ export type RoomEntry = {
     screenshare: Boolean,
     locked: Boolean,
     users: Array<String>,
-    lastActive: Number
+    lastActive: number
 };
 
 export type RoomIndex = {[key: string]: RoomEntry};

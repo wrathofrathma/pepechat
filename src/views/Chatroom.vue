@@ -12,17 +12,29 @@ import UserList from "@/components/UserList.vue"
 import RoomList from "@/components/RoomIndex/RoomList.vue"
 import Room from "@/components/Chatroom/Room.vue"
 
-import {computed, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import {useStore} from "vuex";
 
 import joinRoom from "../scripts/joinRoom";
-import { onBeforeRouteUpdate } from "vue-router";
+// import { onBeforeRouteUpdate } from "vue-router";
 
 const store = useStore();
 
+const roomId = ref("");
+const roomName = ref("");
+
 // Update the window title.
-const roomId = computed(() => store.state.route.params.id);
-const roomName = computed(() => store.state.rooms[roomId.value].name);
+watchEffect(() => {
+    const id = store.state.route.params.id;
+    if (!id) {
+        roomId.value = "";
+        roomName.value = "";
+    }
+
+    roomId.value = id;
+    roomName.value = store.getters.roomName(id);
+})
+
 watchEffect(() => {
     store.commit("setWindowTitle", `PepeChat - #${roomName.value}`);
 })
@@ -30,13 +42,13 @@ watchEffect(() => {
 // store.commit("setWindowTitle", `PepeChat - #${roomName}`)
 // Triggering lifecycle hooks again if we re-use the component but navigate to another channel.
 // https://router.vuejs.org/guide/essentials/dynamic-matching.html
-onBeforeRouteUpdate((to, from, next) => {   
-    // const roomName = store.state.rooms[store.state.route.params.id].name;
-    // store.commit("setWindowTitle", `PepeChat - #${roomName}`)
-    // HTTP request to join the room and this function handles the redirects should something go fucky.
-    // joinRoom(store.state.route.params.id);
-    next();
-})
+// onBeforeRouteUpdate((to, from, next) => {   
+//     // const roomName = store.state.rooms[store.state.route.params.id].name;
+//     // store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+//     // HTTP request to join the room and this function handles the redirects should something go fucky.
+//     // joinRoom(store.state.route.params.id);
+//     next();
+// })
 
 joinRoom(store.state.route.params.id);
 </script>
