@@ -11,3 +11,10 @@ export type RoomEntry = {
 };
 
 export type RoomIndex = {[key: string]: RoomEntry};
+
+export type Message = {
+    uuid: String
+    userId: String,
+    contents: String,
+    timestamp: Number,
+}

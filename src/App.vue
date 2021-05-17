@@ -25,7 +25,6 @@ sock.onopen = (ev: Event) => {
 
 sock.onclose = (ev: Event) => {
   store.commit("setSocket", null);
-    console.log("Closed")
 }
 </script>
 

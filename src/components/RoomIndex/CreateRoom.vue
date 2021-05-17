@@ -100,7 +100,6 @@ const createRoom = async () => {
         name: roomName.value
     })
     .then((res) => {
-        console.log(res.data)
         const {id} = res.data;
         router.push(id)
     })

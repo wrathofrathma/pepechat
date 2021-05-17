@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col">
-        <message-list></message-list>
-        <create-message class="border-green-400 border"></create-message>
+        <message-list :room-id="roomId"></message-list>
+        <create-message class="border-green-400 border" :room-id="roomId"></create-message>
     </div>
 </template>
 

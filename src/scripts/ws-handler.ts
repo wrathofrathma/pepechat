@@ -1,5 +1,5 @@
 import store from "../store";
-import {RoomIndex, RoomEntry} from "../scripts/types";
+import {RoomIndex, RoomEntry, Message} from "../scripts/types";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -25,7 +25,6 @@ function onCredentials(payload: {username: string, avatar: string, uuid: string}
 function onToken(payload: {token: string}) {
     const {token} = payload;
     store.commit("setToken", token);
-    console.log("Token", token)
 }
 
 function onRoomIndex(payload: {rooms: RoomIndex}) {
@@ -38,6 +37,11 @@ function onUserIndex(payload: {users: Object}) {
     store.commit("setUsers", users)
 }
 
+function onRoomMessage(payload: {room: string, message: Message}) {
+    const {message, room} = payload;
+    store.commit("addRoomMessage", {room, message});
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
@@ -45,7 +49,6 @@ function onUserIndex(payload: {users: Object}) {
  */
 function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
     const data = JSON.parse(ev.data);
-    console.log(data)
     switch (data.event) {
         case "credentials":
             onCredentials(data.payload);
@@ -61,6 +64,10 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
 
         case "user/index":
             onUserIndex(data.payload);
+            break;
+        
+        case "room/message":
+            onRoomMessage(data.payload);
             break;
         default:
             break;
