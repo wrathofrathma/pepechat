@@ -33,6 +33,11 @@ function onRoomIndex(payload: {rooms: RoomIndex}) {
     store.commit("setRooms", rooms);
 }
 
+function onUserIndex(payload: {users: Object}) {
+    const {users} = payload;
+    store.commit("setUsers", users)
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
@@ -54,6 +59,9 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
             onRoomIndex(data.payload);
             break;
 
+        case "user/index":
+            onUserIndex(data.payload);
+            break;
         default:
             break;
     }
