@@ -1,7 +1,7 @@
 <template>
     <div 
     class="p-2 justify-between flex flex-row hover:bg-green-400 hover:bg-opacity-20 cursor-pointer"
-    @click="joinRoom"
+    @click="joinRoom(room.id)"
     >
         <!-- Room name -->
         <div class="">
@@ -36,6 +36,7 @@ import type {RoomEntry} from "../../scripts/types";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import HTTP from "../../http";
+import joinRoom from "../../scripts/joinRoom";
 
 const props = defineProps({
     room: {
@@ -48,15 +49,4 @@ const router = useRouter();
 const store = useStore();
 const password = ref("")
 
-const joinRoom = async () => {
-    console.log(props.room.id)
-    await HTTP().post(`room/join/${props.room.id}`, {password: password.value})
-        .then(() => {
-            router.push(props.room.id)
-        })
-        .catch((error) => {
-            // Either connection error or failed to join the room for some reason
-            console.error(error);
-        })
-}
 </script>
