@@ -37,12 +37,24 @@ import RoomList from "@/components/RoomIndex/RoomList.vue"
 import TopBar from "@/components/Header.vue";
 import CreateMessage from "@/components/CreateMessage.vue";
 
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {useStore} from "vuex";
 
 import joinRoom from "../scripts/joinRoom";
+import { onBeforeRouteUpdate } from "vue-router";
 
 const store = useStore();
+
+// Update the window title.
+const roomName = store.state.rooms[store.state.route.params.id].name;
+store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+// Triggering lifecycle hooks again if we re-use the component but navigate to another channel.
+// https://router.vuejs.org/guide/essentials/dynamic-matching.html
+onBeforeRouteUpdate((to, from, next) => {   
+    const roomName = store.state.rooms[store.state.route.params.id].name;
+    store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+    next();
+})
 
 // HTTP request to join the room and this function handles the redirects should something go fucky.
 joinRoom(store.state.route.params.id);

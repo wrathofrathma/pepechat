@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="items-center justify-center flex w-1/3 font-bold text-3xl text-green-400 cursor-default select-none">
-            PEPE CHAT
+            {{title}}
         </div>
         <div class="w-1/3 flex justify-end items-center">
             <v-button class="hover:bg-gray-600 hover:bg-opacity-10 p-2 rounded-full focus:outline-none">
@@ -31,4 +31,5 @@ import {computed} from "vue";
 const store = useStore();
 
 const username = computed(() => store.state.username);
+const title = computed(() => store.state.windowTitle);
 </script>

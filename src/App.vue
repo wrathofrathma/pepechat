@@ -4,8 +4,14 @@
 
 <script setup lang="ts">
 import {useStore} from "vuex";
+import {watchEffect} from "vue";
 
 const store = useStore();
+
+watchEffect(() => {
+  document.title = store.state.windowTitle;
+})
+
 // We want to open the socket here, so we don't close it when we move to the chatroom.
 import handler from "./scripts/ws-handler";
 

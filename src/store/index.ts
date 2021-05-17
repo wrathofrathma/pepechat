@@ -11,7 +11,8 @@ export default createStore({
         socket: null,
         baseURL: "http://localhost:3000",
         rooms: {},
-        token: ""
+        token: "",
+        windowTitle: "PepeChat"
     },
     mutations: {
         setAvatar(state: any, avatar: string) {
@@ -31,6 +32,9 @@ export default createStore({
         },
         setToken(state: any, token: string) {
             state.token = token;
+        },
+        setWindowTitle(state: any, title: string) {
+            state.windowTitle = title;
         }
     },
     getters: {

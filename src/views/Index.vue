@@ -9,4 +9,10 @@
 import Layout from "@/layouts/Default.vue";
 import RoomList from "@/components/RoomIndex/RoomList.vue"
 import UserList from "@/components/UserList.vue"
+
+import {useStore} from "vuex";
+
+const store = useStore();
+
+store.commit("setWindowTitle", "PepeChat")
 </script>
