@@ -1,5 +1,5 @@
 <template>
-    <div class="border-t-2 border-green-400 text-lg p-2 flex flex-col space-y-2">
+    <div class="border-green-400 text-lg p-2 flex flex-col space-y-2 border">
         <!-- Room Name -->
         <text-input 
         placeholder="Create Room"

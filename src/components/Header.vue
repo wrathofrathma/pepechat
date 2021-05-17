@@ -1,8 +1,8 @@
 <template>
-    <div class="flex flex-row w-full h-20 bg-gray-800 p-2 absolute rounded-sm border-green-400 border-2">
+    <div class="flex flex-row w-full bg-gray-800 p-2 rounded-sm border-green-400 border-2 h-20">
         <div class="flex-row flex w-1/3 space-x-2">
             <v-button class="focus:outline-none">
-                <avatar class="border border-green-400"></avatar>
+                <avatar class="border border-green-400 h-16 w-16"></avatar>
             </v-button>
             <div class="justify-center items-center flex p-1">
                 {{username}}
