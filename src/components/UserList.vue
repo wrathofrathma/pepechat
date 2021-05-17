@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col bg-gray-900 border-green-400 h-full">
+    <div class="flex flex-col bg-gray-900 border-green-400 h-full border-r border-l">
         <div class="border-green-400 border-b-2 text-lg text-center ">
             User list
         </div>
