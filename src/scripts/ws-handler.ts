@@ -42,6 +42,11 @@ function onRoomMessage(payload: {room: string, message: Message}) {
     store.commit("addRoomMessage", {room, message});
 }
 
+function onRoomHistory(payload: {room: string, history: Array<Message>}) {
+    const {room, history} = payload;
+    store.commit("setRoomMessages", {room, messages: history})
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
@@ -68,6 +73,10 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
         
         case "room/message":
             onRoomMessage(data.payload);
+            break;
+
+        case "room/history":
+            onRoomHistory(data.payload);
             break;
         default:
             break;
