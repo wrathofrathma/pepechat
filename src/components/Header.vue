@@ -8,8 +8,10 @@
                 {{username}}
             </div>
         </div>
-        <div class="items-center justify-center flex w-1/3 font-bold text-3xl text-green-400 cursor-default select-none">
-            {{title}}
+        <div class="items-center justify-center flex w-1/3 font-bold text-3xl text-green-400">
+            <div class="select-none cursor-pointer" @click="$router.push('/')">
+                {{title}}
+            </div>
         </div>
         <div class="w-1/3 flex justify-end items-center">
             <v-button class="hover:bg-gray-600 hover:bg-opacity-10 p-2 rounded-full focus:outline-none">
