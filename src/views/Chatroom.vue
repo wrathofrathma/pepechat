@@ -1,18 +1,7 @@
 <template>
     <layout>
         <room-list class="w-1/6"></room-list>
-        <div class="flex flex-col h-full w-full">
-            <div class="flex flex-col bg-gray-800 h-full w-full overflow-y-scroll no-scrollbar">
-                <div class="flex flex-row space-x-2 p-2" v-for="n in 20">
-                    <div>Avatar</div>
-                    <div class="flex flex-col">
-                        <div>Username - Timestamp</div>
-                        <div>Message content</div>
-                    </div>
-                </div>
-            </div>
-            <create-message class="border-green-400 border"></create-message>
-        </div>
+        <room class="w-full h-full" :room-id="roomId"></room>
         <user-list class="w-1/6"></user-list>
     </layout>
 </template>
@@ -21,8 +10,9 @@
 import Layout from "@/layouts/Default.vue"
 import UserList from "@/components/UserList.vue"
 import RoomList from "@/components/RoomIndex/RoomList.vue"
-import CreateMessage from "@/components/CreateMessage.vue";
+import Room from "@/components/Chatroom/Room.vue"
 
+import {computed, watchEffect} from "vue";
 import {useStore} from "vuex";
 
 import joinRoom from "../scripts/joinRoom";
@@ -31,17 +21,23 @@ import { onBeforeRouteUpdate } from "vue-router";
 const store = useStore();
 
 // Update the window title.
-const roomName = store.state.rooms[store.state.route.params.id].name;
-store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+const roomId = computed(() => store.state.route.params.id);
+const roomName = computed(() => store.state.rooms[roomId.value].name);
+watchEffect(() => {
+    store.commit("setWindowTitle", `PepeChat - #${roomName.value}`);
+})
+
+// store.commit("setWindowTitle", `PepeChat - #${roomName}`)
 // Triggering lifecycle hooks again if we re-use the component but navigate to another channel.
 // https://router.vuejs.org/guide/essentials/dynamic-matching.html
 onBeforeRouteUpdate((to, from, next) => {   
-    const roomName = store.state.rooms[store.state.route.params.id].name;
-    store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+    // const roomName = store.state.rooms[store.state.route.params.id].name;
+    // store.commit("setWindowTitle", `PepeChat - #${roomName}`)
+    // HTTP request to join the room and this function handles the redirects should something go fucky.
+    // joinRoom(store.state.route.params.id);
     next();
 })
 
-// HTTP request to join the room and this function handles the redirects should something go fucky.
 joinRoom(store.state.route.params.id);
 </script>
 
