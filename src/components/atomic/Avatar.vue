@@ -9,7 +9,7 @@ const props = defineProps({
     src: {
         type: String,
         required: false,
-        default: "/src/assets/avatars/pepejam.gif"
+        default: "/avatars/pepejam.gif"
     }
 })
 </script>

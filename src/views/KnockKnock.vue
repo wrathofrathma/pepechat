@@ -5,7 +5,7 @@
                 <div class="">
                     STOP RIGHT THERE CRIMINAL SCUM!
                 </div>
-                <img src="/src/assets/avatars/pepeprotecc.png" class="h-32 w-32">
+                <img src="/avatars/pepeprotecc.png" class="h-32 w-32">
                 <div class="border-t pt-1">
                     To enter 
                     <span class="font-bold">{{roomName}}</span>
