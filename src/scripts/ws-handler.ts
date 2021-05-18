@@ -78,6 +78,15 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
         case "room/history":
             onRoomHistory(data.payload);
             break;
+
+        case "ping":
+            this.send(JSON.stringify({event: "pong"}));
+            break;
+
+        case "pong":
+            this.send(JSON.stringify({event: "ping"}));
+            break;
+
         default:
             break;
     }
