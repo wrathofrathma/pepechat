@@ -36,7 +36,6 @@ import joinRoom from "../scripts/joinRoom";
 
 
 const store = useStore();
-const baseURL = computed(() => store.state.baseURL);
 const proteccURL = computed(() => {
     const base = store.state.baseURL;
     return `${base}/assets/avatars/pepeprotecc.png`

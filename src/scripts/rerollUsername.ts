@@ -1,7 +1,9 @@
-import store from "../store";
+import HTTP from "../http";
 
-export default function () {
-    store.state.socket.send(JSON.stringify({
-        event: "user/username"
-    }))
+export default async function () {
+
+    await HTTP().post("/user/username/reroll")
+        .catch((error) => {
+            console.error(error);
+        });
 }

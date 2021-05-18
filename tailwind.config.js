@@ -7,7 +7,9 @@ module.exports = {
     extend: {},
   },
   variants: {
-    extend: {},
+    extend: {
+      borderWidth: ['hover']
+    },
   },
   plugins: [
     plugin(function({addUtilities}) {
