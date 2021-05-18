@@ -4,8 +4,15 @@
             <v-button class="focus:outline-none">
                 <avatar class="border border-green-400 h-16 w-16"></avatar>
             </v-button>
-            <div class="justify-center items-center flex p-1">
+            <div class="justify-center items-center flex p-1 space-x-1">
+                <p>
                 {{username}}
+                </p>
+                <v-button @click="rerollUsername">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 hover:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </v-button>
             </div>
         </div>
         <div class="items-center justify-center flex w-1/3 font-bold text-3xl text-green-400">
@@ -26,6 +33,7 @@
 <script setup lang="ts">
 import Avatar from "@/components/atomic/Avatar.vue";
 import VButton from "@/components/atomic/VButton.vue"
+import rerollUsername from "../scripts/rerollUsername";
 
 import {useStore} from "vuex";
 import {computed} from "vue";
