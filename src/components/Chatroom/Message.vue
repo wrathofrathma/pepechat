@@ -40,7 +40,7 @@ onMounted(() => {
 
 const labelUpdater = setInterval(() => {
     timestamp.value = format(props.msg.timestamp);
-}, 10*1000)
+}, 30*1000)
 
 onBeforeUnmount(() => {
     clearInterval(labelUpdater);

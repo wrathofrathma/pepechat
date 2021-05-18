@@ -26,8 +26,8 @@ import type {User} from "../scripts/types";
 const store = useStore();
 
 
-const tab = ref("index");
 const roomId = computed(() => store.state.route.params.id);
+const tab = ref(roomId ? "room" : "index");
 
 function removeDeadUsers(userDict: {[key: string]: User}) {
     const newDict: {[key: string]: User} = {};
