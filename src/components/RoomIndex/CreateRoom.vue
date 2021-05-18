@@ -5,7 +5,7 @@
         placeholder="Create Room"
         class="border rounded-md border-gray-600"
         v-model="roomName"
-        @keyup.enter="createRoom"
+        @keyup.enter="callCreateRoom"
         />
 
         <!-- Room Password -->
@@ -14,7 +14,7 @@
         type="password"
         class="border rounded-md border-gray-600"
         v-model="password"
-        @keyup.enter="createRoom"
+        @keyup.enter="callCreateRoom"
         v-if="isPrivate"
         />
 
@@ -64,7 +64,7 @@
         <div class="flex flex-row justify-center">
             <v-button 
             class="bg-gray-700 rounded-md p-2 pt-1 pb-1 text-blue-300"
-            @click="createRoom"
+            @click="callCreateRoom"
             >
                 Chat with some pepegas
             </v-button>
@@ -77,8 +77,8 @@ import TextInput from "@/components/atomic/TextInput.vue";
 import VButton from "@/components/atomic/VButton.vue"
 import {computed, ref} from "vue";
 import {useStore} from "vuex";
-import HTTP from "../../http";
 import {useRouter} from "vue-router";
+import createRoom from "../../scripts/createRoom";
 
 const store = useStore();
 const router = useRouter();
@@ -90,18 +90,14 @@ const screenshare = ref(true);
 const password = ref("")
 const roomName = ref("")
 
-const createRoom = async () => {
-    await HTTP().post("/room/create", {
+const callCreateRoom = async () => {
+    await createRoom({
         video: video.value,
         audio: audio.value,
-        private: isPrivate.value,
+        isPrivate: isPrivate.value,
         screenshare: screenshare.value,
         password: password.value,
         name: roomName.value
-    })
-    .then((res) => {
-        const {id} = res.data;
-        router.push(id)
     })
     .catch((error) => {
         console.error(error)
