@@ -5,7 +5,7 @@
                 <div class="">
                     STOP RIGHT THERE CRIMINAL SCUM!
                 </div>
-                <img src="/avatars/pepeprotecc.png" class="h-32 w-32">
+                <img :src="proteccURL" class="h-32 w-32">
                 <div class="border-t pt-1">
                     To enter 
                     <span class="font-bold">{{roomName}}</span>
@@ -36,6 +36,11 @@ import joinRoom from "../scripts/joinRoom";
 
 
 const store = useStore();
+const baseURL = computed(() => store.state.baseURL);
+const proteccURL = computed(() => {
+    const base = store.state.baseURL;
+    return `${base}/assets/avatars/pepeprotecc.png`
+})
 
 const questions = [
     "What is the color of night?",

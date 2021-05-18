@@ -3,13 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps} from "vue";
+import {defineProps, computed} from "vue";
+import {useStore} from "vuex";
+
+const store = useStore();
 
 const props = defineProps({
     src: {
         type: String,
         required: false,
-        default: "/avatars/pepejam.gif"
+        default: ""
     }
 })
+
+console.log(props.src)
 </script>

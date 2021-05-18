@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row space-x-2" ref="msg">
-        <avatar class="h-12 w-12"></avatar>
+        <avatar class="h-12 w-12" :src="userAvatar"></avatar>
         <div class="flex flex-col">
             <div class="flex flex-row space-x-2 text-sm">
                 <p class="font-bold">

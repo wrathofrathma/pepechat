@@ -10,7 +10,7 @@
         </div>
         <div class="overflow-y-scroll h-full no-scrollbar">
             <div v-for="user in users" class="flex flex-row items-center space-x-2">
-                <avatar class="h-12 w-12"></avatar>
+                <avatar class="h-12 w-12" :src="user.avatar"></avatar>
                 <p>{{user.username}}</p>
             </div>
         </div>

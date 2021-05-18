@@ -15,6 +15,7 @@ watchEffect(() => {
 // We want to open the socket here, so we don't close it when we move to the chatroom.
 import handler from "./scripts/ws-handler";
 
+// const sock = new WebSocket("ws://localhost:3000");
 const sock = new WebSocket("wss://pepeserver.herokuapp.com/");
 
 sock.onmessage = handler;

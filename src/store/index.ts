@@ -8,6 +8,7 @@ export default createStore({
         avatar: "",
         uuid: "",
         socket: null,
+        // baseURL: "http://localhost:3000",
         baseURL: "https://pepeserver.herokuapp.com",
         rooms: {},
         token: "",
