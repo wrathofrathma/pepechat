@@ -10,7 +10,7 @@
                     {{timestamp}}
                 </p>
             </div>
-            <div>
+            <div style="white-space: pre-wrap;">
                 {{contents}}
             </div>
         </div>
@@ -53,6 +53,7 @@ const username = computed(() => {
 const timestamp = ref(format(props.msg.timestamp));
 
 const contents = computed(() => {
+    console.log(JSON.stringify(props.msg.contents))
     return props.msg.contents;
 })
 

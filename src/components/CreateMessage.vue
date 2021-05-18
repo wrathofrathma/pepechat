@@ -2,7 +2,7 @@
     <div class="p-2">
         <text-field
         class="bg-transparent w-full resize-none focus:outline-none"
-        @keyup.enter="sendMessage"
+        @keyup.exact.enter="sendMessage"
         placeholder="Message"
         v-model="messageValue"
         >
@@ -27,6 +27,7 @@ const props = defineProps({
 })
 
 const sendMessage = () => {
+    console.log(JSON.stringify(messageValue.value))
     if (messageValue.value === "\n" || !messageValue.value){
         messageValue.value = "";
         return;
