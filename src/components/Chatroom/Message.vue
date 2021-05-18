@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed, ref, onMounted} from "vue";
+import {defineProps, computed, ref, onMounted, onBeforeUnmount} from "vue";
 import {useStore} from "vuex";
 import { format } from 'timeago.js';
 import Avatar from "@/components/atomic/Avatar.vue"
@@ -38,13 +38,19 @@ onMounted(() => {
     ((msg.value as unknown) as HTMLElement).scrollIntoView()
 })
 
+const labelUpdater = setInterval(() => {
+    timestamp.value = format(props.msg.timestamp);
+}, 10*1000)
+
+onBeforeUnmount(() => {
+    clearInterval(labelUpdater);
+})
+
 const username = computed(() => {
     return store.getters.username(props.msg.userId);
 });
 
-const timestamp = computed(() => {
-    return format(props.msg.timestamp);
-})
+const timestamp = ref(format(props.msg.timestamp));
 
 const contents = computed(() => {
     return props.msg.contents;
