@@ -1,7 +1,12 @@
 <template>
     <div class="flex flex-col bg-gray-900 border-green-400 h-full border-r border-l">
-        <div class="border-green-400 border-b-2 text-lg text-center ">
-            User list
+        <div class="border-green-400 border-b-2 text-lg text-center flex flex-row justify-between">
+            <div class="w-full cursor-pointer" @click="tab='index'" :class="[tab === 'index' && roomId ? 'bg-gray-800': '']">
+                User Index
+            </div>
+            <div class="w-full cursor-pointer" v-if="roomId" @click="tab='room'" :class="[tab === 'room' && roomId ? 'bg-gray-800' : '']">
+                Room Users
+            </div>
         </div>
         <div class="overflow-y-scroll h-full no-scrollbar">
             <div v-for="user in users" class="flex flex-row items-center space-x-2">
@@ -14,9 +19,23 @@
 
 <script setup lang="ts">
 import Avatar from "@/components/atomic/Avatar.vue"
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useStore} from "vuex";
 
 const store = useStore();
-const users = computed(() => store.state.users);
+
+
+const tab = ref("index");
+const roomId = computed(() => store.state.route.params.id);
+
+const users = computed(() => {
+    if (tab.value === "index")
+        return store.state.users
+    else {
+        const uuids = store.getters.roomUsers(roomId.value);
+        return uuids.map((val: string) => {
+            return store.state.users[val];
+        });
+    }
+});
 </script>
