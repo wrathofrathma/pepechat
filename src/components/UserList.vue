@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col bg-gray-900 border-green-400 h-full border-r border-l">
+    <div class="flex flex-col bg-gray-900 border-green-400 h-full border-r border-l border-b">
         <div class="border-green-400 border-b-2 text-lg text-center flex flex-row justify-between">
             <div class="w-full cursor-pointer" @click="tab='index'" :class="[tab === 'index' && roomId ? 'bg-gray-800': '']">
                 User Index
@@ -8,7 +8,7 @@
                 Room Users
             </div>
         </div>
-        <div class="overflow-y-scroll h-full no-scrollbar p-2">
+        <div class="overflow-y-scroll h-full no-scrollbar">
             <div v-for="user in users" class="flex flex-row items-center space-x-2">
                 <avatar class="h-12 w-12" :src="user.avatar"></avatar>
                 <p>{{user.username}}</p>

@@ -2,7 +2,7 @@
     <div class="w-screen h-screen absolute z-50 bg-opacity-20 items-center flex justify-center" v-if="visible">
         <div v-click-outside="close" class="grid grid-cols-5 gap-4 bg-gray-800 p-3 rounded-lg border-green-400 border">
             <div v-for="av in avatarList" @click="selectAvatar(av)">
-                <avatar :src="av" class="w-16 h-16 cursor-pointer border-green-400 hover:border-2"></avatar>
+                <avatar :src="av" class="w-16 h-16 cursor-pointer border-green-400 filter hover:brightness-125"></avatar>
             </div>
 
         </div>

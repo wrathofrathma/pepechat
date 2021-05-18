@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row w-full bg-gray-800 p-2 rounded-sm border-green-400 border-2 h-20">
         <div class="flex-row flex w-1/3 space-x-2">
-            <v-button class="focus:outline-none" @click="selectorVisible=true">
+            <v-button class="focus:outline-none hover:brightness-125 filter" @click="selectorVisible=true">
                 <avatar class="border border-green-400 h-16 w-16" :src="userAvatar"></avatar>
             </v-button>
             <div class="justify-center items-center flex p-1 space-x-1">
@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="items-center justify-center flex w-1/3 font-bold text-3xl text-green-400">
-            <div class="select-none cursor-pointer" @click="$router.push('/')">
+            <div class="select-none cursor-pointer filter hover:brightness-125" @click="$router.push('/')">
                 {{title}}
             </div>
         </div>

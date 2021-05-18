@@ -8,7 +8,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      borderWidth: ['hover']
+      borderWidth: ['hover'],
+      brightness: ['hover']
     },
   },
   plugins: [

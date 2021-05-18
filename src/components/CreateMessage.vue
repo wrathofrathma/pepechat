@@ -1,7 +1,7 @@
 <template>
     <div class="p-2">
         <text-field
-        class="bg-transparent w-full resize-none"
+        class="bg-transparent w-full resize-none focus:outline-none"
         @keyup.enter="sendMessage"
         placeholder="Message"
         v-model="messageValue"

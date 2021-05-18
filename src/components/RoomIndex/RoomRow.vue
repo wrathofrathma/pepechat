@@ -1,6 +1,6 @@
 <template>
     <div 
-    class="p-2 justify-between flex flex-row hover:bg-green-400 hover:bg-opacity-20 cursor-pointer items-center"
+    class="p-2 justify-between flex flex-row hover:bg-green-400 hover:bg-opacity-20 cursor-pointer items-center filter hover:brightness-125"
     @click="joinRoom(room.id)"
     >
         <!-- Room name -->
@@ -8,7 +8,7 @@
             {{room.name}}
         </div>
         <!-- Avatars for the users in the room -->
-        <div v-if="mainIndex">
+        <div v-if="mainIndex" class="flex">
             <!-- I had no fucking idea I could use store.getters in this binding. I wonder if something will break with this. -->
             <avatar 
             v-for="user in room.users" 
