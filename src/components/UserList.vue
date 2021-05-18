@@ -27,7 +27,7 @@ const store = useStore();
 
 
 const roomId = computed(() => store.state.route.params.id);
-const tab = ref(roomId ? "room" : "index");
+const tab = ref(store.state.route.params.id ? "room" : "index");
 
 function removeDeadUsers(userDict: {[key: string]: User}) {
     const newDict: {[key: string]: User} = {};
