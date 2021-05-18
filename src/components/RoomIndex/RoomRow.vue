@@ -1,11 +1,23 @@
 <template>
     <div 
-    class="p-2 justify-between flex flex-row hover:bg-green-400 hover:bg-opacity-20 cursor-pointer"
+    class="p-2 justify-between flex flex-row hover:bg-green-400 hover:bg-opacity-20 cursor-pointer items-center"
     @click="joinRoom(room.id)"
     >
         <!-- Room name -->
         <div class="">
             {{room.name}}
+        </div>
+        <!-- Avatars for the users in the room -->
+        <div v-if="mainIndex">
+            <!-- I had no fucking idea I could use store.getters in this binding. I wonder if something will break with this. -->
+            <avatar 
+            v-for="user in room.users" 
+            :src="store.getters.avatar(user)"
+            class="h-8 w-8"
+            ></avatar>
+        </div>
+        <div v-else>
+            {{room.users.length}} / ∞
         </div>
         <!-- Room Settings -->
         <div class="flex flex-row text-gray-500">
@@ -30,13 +42,27 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps} from "vue";
+import {defineProps, computed} from "vue";
+import {useStore} from "vuex";
 import joinRoom from "../../scripts/joinRoom";
+import Avatar from "@/components/atomic/Avatar.vue"
 
 const props = defineProps({
     room: {
         type: Object,
         required: true
     }
+})
+
+const store = useStore();
+
+// We need to find out if we're in a room, since that would use the smaller layout without the user avatars in the list.
+const mainIndex = computed(() => {
+    const id = store.state.route.params.id;
+    if (id) {
+        // if this is true, we're in a normal room
+        return false;
+    }
+    return true;
 })
 </script>
