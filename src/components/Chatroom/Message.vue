@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row space-x-2">
+    <div class="flex flex-row space-x-2" ref="msg">
         <avatar class="h-12 w-12"></avatar>
         <div class="flex flex-col">
             <div class="flex flex-row space-x-2 text-sm">
@@ -18,13 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed} from "vue";
+import {defineProps, computed, ref, onMounted} from "vue";
 import {useStore} from "vuex";
-import type {Message} from "../../scripts/types";
 import { format } from 'timeago.js';
 import Avatar from "@/components/atomic/Avatar.vue"
 
 const store = useStore();
+
+const msg = ref();
 
 const props = defineProps({
     msg: {
@@ -32,6 +33,10 @@ const props = defineProps({
         required: true
     }
 });
+
+onMounted(() => {
+    ((msg.value as unknown) as HTMLElement).scrollIntoView()
+})
 
 const username = computed(() => {
     return store.getters.username(props.msg.userId);

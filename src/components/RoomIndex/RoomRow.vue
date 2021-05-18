@@ -30,12 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, ref} from "vue";
-import VButton from "@/components/atomic/VButton.vue";
-import type {RoomEntry} from "../../scripts/types";
-import {useRouter} from "vue-router";
-import {useStore} from "vuex";
-import HTTP from "../../http";
+import {defineProps} from "vue";
 import joinRoom from "../../scripts/joinRoom";
 
 const props = defineProps({
@@ -44,9 +39,4 @@ const props = defineProps({
         required: true
     }
 })
-
-const router = useRouter();
-const store = useStore();
-const password = ref("")
-
 </script>
