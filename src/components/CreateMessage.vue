@@ -27,7 +27,6 @@ const props = defineProps({
 })
 
 const sendMessage = () => {
-    console.log(JSON.stringify(messageValue.value))
     if (messageValue.value === "\n" || !messageValue.value){
         messageValue.value = "";
         return;

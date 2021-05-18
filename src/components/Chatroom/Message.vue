@@ -53,7 +53,6 @@ const username = computed(() => {
 const timestamp = ref(format(props.msg.timestamp));
 
 const contents = computed(() => {
-    console.log(JSON.stringify(props.msg.contents))
     return props.msg.contents;
 })
 
