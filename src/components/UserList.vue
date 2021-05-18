@@ -21,6 +21,7 @@
 import Avatar from "@/components/atomic/Avatar.vue"
 import {computed, ref} from "vue";
 import {useStore} from "vuex";
+import type {User} from "../scripts/types";
 
 const store = useStore();
 
@@ -28,9 +29,18 @@ const store = useStore();
 const tab = ref("index");
 const roomId = computed(() => store.state.route.params.id);
 
+function removeDeadUsers(userDict: {[key: string]: User}) {
+    const newDict: {[key: string]: User} = {};
+    for (const [key, val] of Object.entries(userDict)) {
+        if (!val.dead)
+            newDict[key] = val;
+    }
+    return newDict;
+}
+
 const users = computed(() => {
     if (tab.value === "index")
-        return store.state.users
+        return removeDeadUsers(store.state.users)
     else {
         const uuids = store.getters.roomUsers(roomId.value);
         return uuids.map((val: string) => {

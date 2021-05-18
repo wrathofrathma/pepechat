@@ -18,3 +18,9 @@ export type Message = {
     contents: String,
     timestamp: number,
 }
+
+export type User = {
+    username: string,
+    avatar: string,
+    dead: boolean
+}
