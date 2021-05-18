@@ -3,8 +3,8 @@ import HTTP from "../http";
 import store from "../store";
 import router from "../routes";
 
-export default async function joinRoom(roomId: string) {
-    await HTTP().post(`room/join/${roomId}`, {password: ""})
+export default async function joinRoom(roomId: string, password: string = "") {
+    await HTTP().post(`room/join/${roomId}`, {password})
         .then(() => {
             // If we're not already on the page, then let's redirect.
             if (store.state.route.path !== `/${roomId}`)
