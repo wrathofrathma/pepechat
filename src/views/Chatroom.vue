@@ -16,6 +16,8 @@ import {ref, watchEffect} from "vue";
 import {useStore} from "vuex";
 
 import joinRoom from "../scripts/joinRoom";
+import leaveRoom from "../scripts/leaveRoom";
+import { onBeforeRouteLeave } from "vue-router";
 
 const store = useStore();
 
@@ -36,6 +38,10 @@ watchEffect(() => {
 
 watchEffect(() => {
     store.commit("setWindowTitle", `PepeChat - #${roomName.value}`);
+})
+
+onBeforeRouteLeave(async () => {
+    await leaveRoom(roomId.value);
 })
 
 joinRoom(store.state.route.params.id);
