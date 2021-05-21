@@ -16,9 +16,9 @@
             class="h-8 w-8"
             ></avatar>
         </div>
-        <div v-else>
+        <!-- <div v-else>
             {{room.users.length}} / ∞
-        </div>
+        </div> -->
         <!-- Room Settings -->
         <div class="flex flex-row text-gray-500">
             <!-- Webcam-->
