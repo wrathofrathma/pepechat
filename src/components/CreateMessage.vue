@@ -27,6 +27,7 @@ const props = defineProps({
 })
 
 const sendMessage = () => {
+    // TODO - Regex match this to check for messages containing only newlines lol
     if (messageValue.value === "\n" || !messageValue.value){
         messageValue.value = "";
         return;
