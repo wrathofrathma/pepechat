@@ -1,5 +1,5 @@
 import store from "../store";
-import {RoomIndex, RoomEntry, Message} from "../scripts/types";
+import type {RoomIndex, RoomEntry, Message} from "../scripts/types";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -47,6 +47,10 @@ function onRoomHistory(payload: {room: string, history: Array<Message>}) {
     store.commit("setRoomMessages", {room, messages: history})
 }
 
+function onRoomInfo(payload: {id: string, room: RoomEntry}) {
+    store.commit("setRoom", payload);
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
@@ -77,6 +81,10 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
 
         case "room/history":
             onRoomHistory(data.payload);
+            break;
+
+        case "room/info":
+            onRoomInfo(data.payload.room);
             break;
 
         case "ping":

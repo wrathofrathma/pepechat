@@ -1,5 +1,6 @@
-import {createStore} from 'vuex';
-import type {RoomIndex, Message} from "../scripts/types";
+import {createStore, storeKey} from 'vuex';
+import type {RoomIndex, Message, RoomEntry, RoomStreamState} from "../scripts/types";
+import lodash from "lodash";
 
 export default createStore({
     strict: true,
@@ -14,7 +15,12 @@ export default createStore({
         token: "",
         windowTitle: "PepeChat",
         users: {},
-        roomMessages: {}
+        roomMessages: {},
+        userWebcamStreams: {},
+        userAudioStreams: {},
+        webcamActive: false,
+        microphoneActive: false,
+        peerConnections: {},
     },
     mutations: {
         setAvatar(state: any, avatar: string) {
@@ -31,6 +37,10 @@ export default createStore({
         },
         setRooms(state: any, rooms: any) {
             state.rooms = rooms;
+        },
+        setRoom(state: any, payload: {id: string, room: RoomEntry}) {
+            const {id, room} = payload;
+            state.rooms[id] = room;
         },
         setToken(state: any, token: string) {
             state.token = token;
@@ -50,6 +60,24 @@ export default createStore({
             if (!state.roomMessages[room])
                 state.roomMessages[room] = [];
             state.roomMessages[room].push(message);
+        },
+        setUserWebcam(state: any, payload: {uuid: string, stream: MediaStream}) {
+            const {uuid, stream} = payload;
+            state.userWebcamStreams[uuid] = stream;
+        },
+        setUserAudio(state: any, payload: {uuid: string, stream: MediaStream}) {
+            const {uuid, stream} = payload;
+            state.userAudioStreams[uuid] = stream;
+        }, 
+        setMicrophoneActive(state: any, mic: boolean) {
+            state.microphoneActive = mic;
+        },
+        setWebcamActive(state: any, webcam: boolean) {
+            state.webcamActive = webcam;
+        },
+        setPeerConnection(state: any, payload: {pc: RTCPeerConnection, user: string}) {
+            const {user, pc} = payload;
+            state.peerConnections[user] = pc;
         }
     },
     getters: {
@@ -89,6 +117,20 @@ export default createStore({
                 return state.users[uuid].avatar;
             }
             return ""
+        },
+        userWebcams: (state: any) => (room: string) => {
+            const streams: Array<string> = [];
+            if (!state.rooms[room]) {
+                return streams;
+            }
+            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
+                if ((val as RoomStreamState).webcam)
+                    streams.push(key);
+            }
+            return streams;
+        },
+        webcamStream: (state: any) => (uuid: string) => {
+            return state.userWebcamStreams[uuid];
         }
     },
     actions: {
