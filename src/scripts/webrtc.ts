@@ -20,6 +20,9 @@ const ice_config = {
 export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescriptionInit> {
     // Create peer connection with the ICE config
     const pc = new RTCPeerConnection(ice_config);
+    // Because we did the fix on the line below to gather ICE candidates immediately, sometimes our events trigger before our store commits causing a race event between
+    // The store saving the peer connection and the candidates gathering. Resulting in null peerconnection
+    store.commit("setPeerConnection", {pc, user: remoteUser});
     // Generate an SDP offer of our capabilities
     // Necessary to offer to receive audio/video or else ICE candidates won't be gathered until a track is added.
     // source: https://stackoverflow.com/questions/61325035/no-ice-candidates-gathering-peerconnection-icegatheringstate-returns-complete
@@ -27,7 +30,6 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     // Set it to our local description
     await pc.setLocalDescription(offer); 
     // Save the peer connection so we can access it in other areas of the program.
-    store.commit("setPeerConnection", {pc, user: remoteUser});
 
     const localUser = store.state.uuid;
     // Event handlers
@@ -36,16 +38,17 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent(pc);
     pc.onsignalingstatechange = handleSignalingStateChangeEvent(pc);
     pc.onconnectionstatechange = handleConnectionStateChange(pc);
-
+    pc.ontrack = handleTrackEvent;
+    pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
     return offer;
 }
 
 export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: string) {
     const pc = new RTCPeerConnection(ice_config);
+    store.commit("setPeerConnection", {pc, user: remoteUser});
     await pc.setRemoteDescription(offer);
     const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
     await pc.setLocalDescription(answer);
-    store.commit("setPeerConnection", {pc, user: remoteUser});
 
     const localUser = store.state.uuid;
     // Event handlers
@@ -54,6 +57,8 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
     pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent(pc);
     pc.onsignalingstatechange = handleSignalingStateChangeEvent(pc);
     pc.onconnectionstatechange = handleConnectionStateChange(pc);
+    pc.ontrack = handleTrackEvent;
+    pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
     return answer;
 }
 
@@ -65,6 +70,11 @@ export async function onAnswer(answer: RTCSessionDescriptionInit, user: string) 
 export async function addICECandidate(remoteUser: string, candidate: RTCIceCandidate) {
     const pc = (store.state.peerConnections[remoteUser] as RTCPeerConnection);
     pc.addIceCandidate(candidate);
+}
+
+export async function answerRenegotiation(offer: RTCSessionDescriptionInit, remoteUser: string) {
+    const pc = (store.state.peerConnections[remoteUser] as RTCPeerConnection);
+    await pc.setRemoteDescription(offer);
 }
 
 /************** WEBRTC EVENT HANDLERS **************/
@@ -92,11 +102,26 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
 
 function handleTrackEvent() {
     // When the remote adds a track
+    console.log("Track was added")
 
 }
 
-function handleNegotiationNeededEvent() {
+function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string) {
+    const sock = store.state.socket;
+    const uuid = store.state.uuid;
 
+    return async () => {
+        console.log("Negotiation needed")
+        const offer = await pc.createOffer();
+        sock.send(JSON.stringify({
+            event: "rtc/renegotiation",
+            payload: {
+                target: remoteUser,
+                sender: uuid,
+                offer
+            }
+        }))
+    }
 }
 
 function handleRemoveTrackEvent() {

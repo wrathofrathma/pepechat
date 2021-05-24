@@ -1,6 +1,6 @@
 import store from "../store";
 import type {RoomIndex, RoomEntry, Message} from "../scripts/types";
-import { addICECandidate, answerOffer, initWebRTC, onAnswer } from "./webrtc";
+import { addICECandidate, answerOffer, answerRenegotiation, initWebRTC, onAnswer } from "./webrtc";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -95,6 +95,16 @@ async function onICECandidate(socket: WebSocket, payload: {target: string, sende
 }
 
 /**
+ * When the remote adds or removes a track, we need to renegotiate our stream. 
+ * @param {WebSocket} socket The live websocket
+ * @param payload 
+ */
+async function onRenegotiation(socket: WebSocket, payload: {target: string, sender: string, offer: RTCSessionDescriptionInit}) {
+    const {offer, sender} = payload;
+    await answerRenegotiation(offer, sender);
+}
+
+/**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
  * @param {MessageEvent<any>} ev Event payload
@@ -152,6 +162,10 @@ async function onMessage (this: WebSocket, ev: MessageEvent<any>): Promise<any>{
         
         case "rtc/icecandidate":
             await onICECandidate(this, data.payload);
+            break;
+
+        case "rtc/renegotiation":
+            await onRenegotiation(this, data.payload);
             break;
 
         default:
