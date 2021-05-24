@@ -131,6 +131,9 @@ export default createStore({
         },
         webcamStream: (state: any) => (uuid: string) => {
             return state.userWebcamStreams[uuid];
+        },
+        peerConnection: (state: any) => (uuid: string) => {
+            return state.peerConnections[uuid];
         }
     },
     actions: {

@@ -1,5 +1,6 @@
 import store from "../store";
 import type {RoomIndex, RoomEntry, Message} from "../scripts/types";
+import { addICECandidate, answerOffer, initWebRTC, onAnswer } from "./webrtc";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -51,12 +52,54 @@ function onRoomInfo(payload: {id: string, room: RoomEntry}) {
     store.commit("setRoom", payload);
 }
 
+async function onInitWebRTC(sock: WebSocket, payload: {target: string}) {
+    console.log("Told to init webrtc")
+    const {target} = payload;
+    const offer = await initWebRTC(target);
+    const uuid = store.state.uuid;
+    sock.send(JSON.stringify({
+        event: "rtc/offer",
+        payload: {
+            target,
+            sender: uuid,
+            offer
+        }
+    }));
+}
+
+async function onRTCOffer(sock: WebSocket, payload: {target: string, sender: string, offer: RTCSessionDescriptionInit}) {
+    console.log("Received an rtc offer")
+    const {target, sender, offer} = payload;
+    const answer = await answerOffer(offer, sender);
+    sock.send(JSON.stringify({
+        event: "rtc/answer",
+        payload: {
+            target: sender,
+            sender: target,
+            answer
+        }
+    }));
+    console.log("Sending answer")
+}
+
+async function onRTCAnswer(socket: WebSocket, payload: {target: string, sender: string, answer: Object}) {
+    console.log("Received rtc answer")
+    const {answer, target, sender} = payload;
+    await onAnswer(answer, sender);
+}
+
+async function onICECandidate(socket: WebSocket, payload: {target: string, sender: string, candidate: RTCIceCandidate}) {
+    console.log("Received an ICE Candidate")
+    const {sender, candidate} = payload;
+    addICECandidate(sender, candidate);
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
  * @param {MessageEvent<any>} ev Event payload
  */
-function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
+async function onMessage (this: WebSocket, ev: MessageEvent<any>): Promise<any>{
     const data = JSON.parse(ev.data);
     switch (data.event) {
         case "credentials":
@@ -93,6 +136,22 @@ function onMessage (this: WebSocket, ev: MessageEvent<any>): any {
 
         case "pong":
             this.send(JSON.stringify({event: "ping"}));
+            break;
+
+        case "rtc/init":
+            await onInitWebRTC(this, data.payload);
+            break;
+        
+        case "rtc/offer":
+            await onRTCOffer(this, data.payload);
+            break;
+        
+        case "rtc/answer":
+            await onRTCAnswer(this, data.payload);
+            break;
+        
+        case "rtc/icecandidate":
+            await onICECandidate(this, data.payload);
             break;
 
         default:
