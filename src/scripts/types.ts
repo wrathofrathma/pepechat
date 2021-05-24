@@ -1,11 +1,12 @@
 // Server data models
 
-export type RoomStreamState = {
+export type RoomStreamTracks = {
     [key: string]: {
-        webcam: boolean,
-        audio: boolean
+        webcam: string,
+        audio: string,
     }
 }
+
 export type RoomEntry = {
     name: String,
     video: Boolean,
@@ -14,7 +15,7 @@ export type RoomEntry = {
     locked: Boolean,
     users: Array<String>,
     lastActive: number,
-    streams: RoomStreamState
+    streams: RoomStreamTracks,
 };
 
 export type RoomIndex = {[key: string]: RoomEntry};

@@ -26,19 +26,4 @@ const props = defineProps({
 
 const stream = computed(() => store.getters.webcamStream(props.streamUser));
 
-const fetchStream = async () => {
-    if (!stream) 
-        await getUserWebcam();
-}
-
-let fetchInterval: number;
-
-onMounted(async () => {
-    fetchInterval = setInterval(fetchStream, 30 * 1000);
-    await fetchStream();
-})
-
-onUnmounted(() => {
-    clearInterval(fetchInterval);
-})
 </script>

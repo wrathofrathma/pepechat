@@ -100,10 +100,10 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
     }
 }
 
-function handleTrackEvent() {
+function handleTrackEvent(event: RTCTrackEvent) {
     // When the remote adds a track
-    console.log("Track was added")
-
+    console.log("Track was added", event);
+    store.commit("addTrack", event.track);
 }
 
 function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string) {

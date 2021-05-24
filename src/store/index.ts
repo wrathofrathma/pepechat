@@ -1,5 +1,5 @@
 import {createStore, storeKey} from 'vuex';
-import type {RoomIndex, Message, RoomEntry, RoomStreamState} from "../scripts/types";
+import type {RoomIndex, Message, RoomEntry, RoomStreamTracks} from "../scripts/types";
 import lodash from "lodash";
 
 export default createStore({
@@ -21,6 +21,7 @@ export default createStore({
         webcamActive: false,
         microphoneActive: false,
         peerConnections: {},
+        tracks: {},
     },
     mutations: {
         setAvatar(state: any, avatar: string) {
@@ -78,6 +79,12 @@ export default createStore({
         setPeerConnection(state: any, payload: {pc: RTCPeerConnection, user: string}) {
             const {user, pc} = payload;
             state.peerConnections[user] = pc;
+        },
+        addTrack(state: any, track: MediaStreamTrack) {
+            state.tracks[track.id] = track;
+        },
+        removeTrack(state: any, track: string) {
+            delete state.tracks[track];
         }
     },
     getters: {
@@ -124,7 +131,7 @@ export default createStore({
                 return streams;
             }
             for (const [key, val] of Object.entries(state.rooms[room].streams)) {
-                if ((val as RoomStreamState).webcam)
+                if ((val as RoomStreamTracks).webcam)
                     streams.push(key);
             }
             return streams;
@@ -134,6 +141,9 @@ export default createStore({
         },
         peerConnection: (state: any) => (uuid: string) => {
             return state.peerConnections[uuid];
+        },
+        track: (state: any) => (uuid: string) => {
+            return state.tracks[uuid];
         }
     },
     actions: {
