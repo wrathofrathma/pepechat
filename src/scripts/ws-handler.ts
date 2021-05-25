@@ -1,6 +1,6 @@
 import store from "../store";
 import type {RoomIndex, RoomEntry, Message} from "../scripts/types";
-import { addICECandidate, answerOffer, answerRenegotiation, initWebRTC, onAnswer } from "./webrtc";
+import { addICECandidate, answerOffer, answerRenegotiation, initWebRTC, onAnswer, renegotiationAnswer } from "./webrtc";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -100,8 +100,22 @@ async function onICECandidate(socket: WebSocket, payload: {target: string, sende
  * @param payload 
  */
 async function onRenegotiation(socket: WebSocket, payload: {target: string, sender: string, offer: RTCSessionDescriptionInit}) {
-    const {offer, sender} = payload;
-    await answerRenegotiation(offer, sender);
+    const {offer, sender, target} = payload;
+    const answer = await answerRenegotiation(offer, sender);
+    socket.send(JSON.stringify({
+        event: "rtc/answerrenegotiation",
+        payload: {
+            sender: target,
+            target: sender,
+            answer
+        }
+    }));
+}
+
+async function onRenegotiationAnswer(socket: WebSocket, payload: {target: string, sender: string, answer: RTCSessionDescriptionInit}) {
+    console.log("Received renegotiation answer")
+    const {answer, target, sender} = payload;
+    renegotiationAnswer(answer, sender);
 }
 
 /**
@@ -166,6 +180,10 @@ async function onMessage (this: WebSocket, ev: MessageEvent<any>): Promise<any>{
 
         case "rtc/renegotiation":
             await onRenegotiation(this, data.payload);
+            break;
+
+        case "rtc/answerrenegotiation":
+            await onRenegotiationAnswer(this, data.payload);
             break;
 
         default:

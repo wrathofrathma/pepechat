@@ -1,5 +1,6 @@
 import adapter from "webrtc-adapter";
 import store from "../store";
+import {webcamTrackSenders} from "./streams";
 
 const ice_config = {
     sdpSemantics: "unified-plan",
@@ -23,6 +24,29 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     // Because we did the fix on the line below to gather ICE candidates immediately, sometimes our events trigger before our store commits causing a race event between
     // The store saving the peer connection and the candidates gathering. Resulting in null peerconnection
     store.commit("setPeerConnection", {pc, user: remoteUser});
+
+    const localUser = store.state.uuid;
+    // Event handlers
+    pc.onicecandidate = handleIceCandidateEvent(localUser, remoteUser);
+    pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent(pc);
+    pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent(pc);
+    pc.onsignalingstatechange = handleSignalingStateChangeEvent(pc);
+    pc.onconnectionstatechange = handleConnectionStateChange(pc);
+    pc.ontrack = handleTrackEvent;
+    pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
+
+    // Attach relevant media streams if they exist
+    if (store.state.webcamActive && store.state.webcamStream) {
+        const stream = (store.state.webcamStream as MediaStream);
+        const track = stream.getVideoTracks()[0];
+        webcamTrackSenders[remoteUser] = pc.addTrack(track, stream);
+    }
+
+    if (store.state.microphoneActive && store.state.microphoneStream) {
+        // Same shit as the webcam
+    }
+
+
     // Generate an SDP offer of our capabilities
     // Necessary to offer to receive audio/video or else ICE candidates won't be gathered until a track is added.
     // source: https://stackoverflow.com/questions/61325035/no-ice-candidates-gathering-peerconnection-icegatheringstate-returns-complete
@@ -31,27 +55,16 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     await pc.setLocalDescription(offer); 
     // Save the peer connection so we can access it in other areas of the program.
 
-    const localUser = store.state.uuid;
-    // Event handlers
-    pc.onicecandidate = handleIceCandidateEvent(localUser, remoteUser);
-    pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent(pc);
-    pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent(pc);
-    pc.onsignalingstatechange = handleSignalingStateChangeEvent(pc);
-    pc.onconnectionstatechange = handleConnectionStateChange(pc);
-    pc.ontrack = handleTrackEvent;
-    pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
     return offer;
 }
 
 export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: string) {
     const pc = new RTCPeerConnection(ice_config);
     store.commit("setPeerConnection", {pc, user: remoteUser});
-    await pc.setRemoteDescription(offer);
-    const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
-    await pc.setLocalDescription(answer);
 
     const localUser = store.state.uuid;
-    // Event handlers
+    // Event handlers - NOTE, these need to come before adding any tracks
+    // if not, then the ontrack thing is never triggered and it's never really dealt with for people already streaming when we enter the room
     pc.onicecandidate = handleIceCandidateEvent(localUser, remoteUser);
     pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent(pc);
     pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent(pc);
@@ -59,6 +72,21 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
     pc.onconnectionstatechange = handleConnectionStateChange(pc);
     pc.ontrack = handleTrackEvent;
     pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
+
+    // Attach relevant media streams if they exist
+    if (store.state.webcamActive && store.state.webcamStream) {
+        const stream = (store.state.webcamStream as MediaStream);
+        const track = stream.getVideoTracks()[0];
+        webcamTrackSenders[remoteUser] = pc.addTrack(track, stream);
+    }
+
+    if (store.state.microphoneActive && store.state.microphoneStream) {
+        // Same shit as the webcam
+    }
+    await pc.setRemoteDescription(offer);
+    const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
+    await pc.setLocalDescription(answer);
+
     return answer;
 }
 
@@ -75,6 +103,15 @@ export async function addICECandidate(remoteUser: string, candidate: RTCIceCandi
 export async function answerRenegotiation(offer: RTCSessionDescriptionInit, remoteUser: string) {
     const pc = (store.state.peerConnections[remoteUser] as RTCPeerConnection);
     await pc.setRemoteDescription(offer);
+    const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
+    await pc.setLocalDescription(answer);
+    return answer;
+}
+
+// TODO we need to change these names. This shit is too confusing
+export async function renegotiationAnswer(answer: RTCSessionDescriptionInit, remoteUser: string) {
+    const pc = (store.state.peerConnections[remoteUser] as RTCPeerConnection);
+    await pc.setRemoteDescription(answer);
 }
 
 /************** WEBRTC EVENT HANDLERS **************/
@@ -88,7 +125,6 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
     const sock = store.state.socket;
 
     return (event: RTCPeerConnectionIceEvent) => {
-        console.log("Found an ICE Candidate")
         sock.send(JSON.stringify({
             event: "rtc/icecandidate",
             payload: { 
@@ -102,8 +138,7 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
 
 function handleTrackEvent(event: RTCTrackEvent) {
     // When the remote adds a track
-    console.log("Track was added", event);
-    store.commit("addTrack", event.track);
+    store.commit("addTrack", event.streams[0]);
 }
 
 function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string) {
@@ -112,7 +147,8 @@ function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string)
 
     return async () => {
         console.log("Negotiation needed")
-        const offer = await pc.createOffer();
+        const offer = await pc.createOffer({offerToReceiveVideo: true, offerToReceiveAudio: true});
+        await pc.setLocalDescription(offer);
         sock.send(JSON.stringify({
             event: "rtc/renegotiation",
             payload: {
