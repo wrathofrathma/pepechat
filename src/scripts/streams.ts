@@ -178,3 +178,40 @@ export async function selectWebcam(webcam: MediaDeviceInfo) {
     // I thought about setting the stream state with setStreamState(), but 
     // The state doesn't change since we are only changing tracks. pog
 }
+
+export async function selectMicrophone(microphone: MediaDeviceInfo) {
+    // Commit it
+    store.commit("setMicrophoneDevice", microphone);
+    // If we're not currently streaming our mic, we can stop now
+    if (!store.state.microphoneActive)
+        return;
+    // Otherwise, we need to get the audio stream and stop all the audio tracks and switch over
+    // Remove it from the local stream
+    userMediaStream.getAudioTracks().forEach((track) => {
+        track.stop();
+        userMediaStream.removeTrack(track);
+    })
+    // Get the new stream and store it
+    const stream = await navigator.mediaDevices.getUserMedia({video: false, audio: {
+        deviceId: {
+            exact: microphone.deviceId
+        }
+    }});
+    store.commit("setMicrophone", stream);
+
+    // Add the track to our local stream
+    const track = stream.getAudioTracks()[0];
+    userMediaStream.addTrack(track);
+
+    // Now we need to remove the old from the peer connections and add the new tracks
+    for (const [key, val] of Object.entries(store.state.peerConnections)) {
+        // key = uuid
+        // val = RTCPeerConnection
+        const pc = (val as RTCPeerConnection);
+        // Remove the track and delete the sender tracker
+        pc.removeTrack(microphoneTrackSenders[key]);
+        delete microphoneTrackSenders[key];
+        // Add the new track
+        microphoneTrackSenders[key] = pc.addTrack(track, userMediaStream);
+    }
+}

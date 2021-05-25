@@ -99,6 +99,9 @@ export default createStore({
         },
         setWebcamDevice(state: any, device: MediaDeviceInfo) {
             state.webcamDevice = device;
+        },
+        setMicrophoneDevice(state: any, device: MediaDeviceInfo) {
+            state.microphoneDevice = device;
         }
     },
     getters: {
