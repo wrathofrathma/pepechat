@@ -127,6 +127,23 @@ export default createStore({
             }
             return ""
         },
+        userMics: (state: any) => (room: string) => {
+            const streams: Array<{user: string, track: string}> = [];
+            if (!state.rooms[room]) {
+                return streams;
+            }
+            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
+                if (key === state.uuid)
+                    continue;
+                if ((val as {audio: string}).audio) {
+                    streams.push({
+                        user: key, 
+                        track: (val as {audio: string}).audio
+                    });
+                }
+            }
+            return streams;
+        },
         userWebcams: (state: any) => (room: string) => {
             const streams: Array<{user: string, track: string}> = [];
             if (!state.rooms[room]) {

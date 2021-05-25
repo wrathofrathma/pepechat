@@ -57,7 +57,13 @@ const onToggleWebcam = async () => {
     }
 }
 
-const onToggleMute = () => {
+const onToggleMute = async () => {
+    if (!muted.value) {
+        await startMicrophone();
+    }
+    else if (muted.value) {
+        await stopMicrophone();
+    }
 }
 
 const onToggleScreenshare = () => {

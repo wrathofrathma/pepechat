@@ -1,6 +1,6 @@
 import adapter from "webrtc-adapter";
 import store from "../store";
-import {webcamTrackSenders} from "./streams";
+import {webcamTrackSenders, microphoneTrackSenders} from "./streams";
 
 const ice_config = {
     sdpSemantics: "unified-plan",
@@ -44,6 +44,9 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
 
     if (store.state.microphoneActive && store.state.microphoneStream) {
         // Same shit as the webcam
+        const stream = (store.state.microphoneStream as MediaStream);
+        const track = stream.getAudioTracks()[0];
+        microphoneTrackSenders[remoteUser] = pc.addTrack(track, stream);
     }
 
 
@@ -82,6 +85,9 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
 
     if (store.state.microphoneActive && store.state.microphoneStream) {
         // Same shit as the webcam
+        const stream = (store.state.microphoneStream as MediaStream);
+        const track = stream.getAudioTracks()[0];
+        microphoneTrackSenders[remoteUser] = pc.addTrack(track, stream);
     }
     await pc.setRemoteDescription(offer);
     const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});

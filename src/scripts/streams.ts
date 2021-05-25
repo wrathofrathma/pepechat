@@ -4,6 +4,7 @@ import store from "../store";
 // Why would I use vuex for it anyways? Shit, should I rewrite the webrtc stuff to be stored in webrtc.js? kms
 
 export const webcamTrackSenders: {[key: string]: RTCRtpSender} = {};
+export const microphoneTrackSenders: {[key: string]: RTCRtpSender} = {};
 
 export function setStreamState() {
     const socket = store.state.socket as WebSocket;
@@ -45,7 +46,15 @@ export async function startMicrophone() {
     store.commit("setMicrophoneActive", true);
     const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
     store.commit("setMicrophone", stream);
+    store.commit("addTrack", stream);
     setStreamState();
+    const track = stream.getAudioTracks()[0];
+
+    for (const [key, val] of Object.entries(store.state.peerConnections)) {
+        const pc = (val as RTCPeerConnection); 
+        microphoneTrackSenders[key] = pc.addTrack(track, stream);
+    }
+
     return stream;
 }
 
@@ -70,11 +79,16 @@ export async function stopWebcam() {
 export async function stopMicrophone() {
     store.commit("setMicrophoneActive", false);
     const uuid = store.state.uuid;
-    const stream = (store.state.userAudioStreams[uuid] as MediaStream);
+
+    const stream = (store.state.microphoneStream as MediaStream);
     stream
         .getAudioTracks()
         .forEach((track) => {
             track.stop();            
+            for (const [key, val] of Object.entries(store.state.peerConnections)) {
+                const pc = (val as RTCPeerConnection);
+                pc.removeTrack(microphoneTrackSenders[key]);
+            }
         });
 
     store.commit("setMicrophone", null);
