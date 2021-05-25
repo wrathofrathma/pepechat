@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-green-400 w-full h-full">
+    <div class="w-full h-full grid grid-flow-row grid-cols-3 gap-4">
         <stream v-for="s in userMedia" :stream-user="s.user" :track="s.track" stream-type="webcam"></stream>
     </div>
 </template>
