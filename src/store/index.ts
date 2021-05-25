@@ -21,7 +21,7 @@ export default createStore({
         webcamActive: false,
         microphoneActive: false, 
         peerConnections: {}, // RTCPeerConnections
-        tracks: {}, // Remote MediaStreams - Need to change this to reflect that
+        streams: {}, // Remote MediaStreams
     },
 
     mutations: {
@@ -76,14 +76,14 @@ export default createStore({
         removePeerConnection(state: any, uuid: string) {
             delete state.peerConnections[uuid];
         },
-        addTrack(state: any, track: MediaStreamTrack) {
-            state.tracks[track.id] = track;
-            state.tracks = {
-                ...state.tracks
+        addStream(state: any, stream: MediaStream) {
+            state.streams[stream.id] = stream;
+            state.streams = {
+                ...state.streams
             }
         },
-        removeTrack(state: any, track: string) {
-            delete state.tracks[track];
+        removeStream(state: any, stream: string) {
+            delete state.streams[stream];
         },
         setWebcam(state: any, webcam: MediaStream) {
             state.webcamStream = webcam;
@@ -130,33 +130,16 @@ export default createStore({
             }
             return ""
         },
-        userMics: (state: any) => (room: string) => {
-            const streams: Array<{user: string, track: string}> = [];
+        userMediaStreamKeys: (state: any) => (room: string) => {
+            const streams: Array<{user: string, stream: string}> = [];
             if (!state.rooms[room]) {
                 return streams;
             }
             for (const [key, val] of Object.entries(state.rooms[room].streams)) {
-                if (key === state.uuid)
-                    continue;
-                if ((val as {audio: string}).audio) {
+                if ((val as {userMedia: string}).userMedia)
                     streams.push({
                         user: key, 
-                        track: (val as {audio: string}).audio
-                    });
-                }
-            }
-            return streams;
-        },
-        userWebcams: (state: any) => (room: string) => {
-            const streams: Array<{user: string, track: string}> = [];
-            if (!state.rooms[room]) {
-                return streams;
-            }
-            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
-                if ((val as {webcam: string}).webcam)
-                    streams.push({
-                        user: key, 
-                        track: (val as {webcam: string}).webcam
+                        stream: (val as {userMedia: string}).userMedia
                     });
             }
             return streams;
@@ -164,8 +147,8 @@ export default createStore({
         peerConnection: (state: any) => (uuid: string) => {
             return state.peerConnections[uuid];
         },
-        track: (state: any) => (uuid: string) => {
-            return state.tracks[uuid];
+        stream: (state: any) => (uuid: string) => {
+            return state.streams[uuid];
         }
     },
     actions: {

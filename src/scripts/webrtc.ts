@@ -1,6 +1,6 @@
 import adapter from "webrtc-adapter";
 import store from "../store";
-import {webcamTrackSenders, microphoneTrackSenders} from "./streams";
+import {webcamTrackSenders, microphoneTrackSenders, userMediaStream} from "./streams";
 
 const ice_config = {
     sdpSemantics: "unified-plan",
@@ -39,14 +39,14 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     if (store.state.webcamActive && store.state.webcamStream) {
         const stream = (store.state.webcamStream as MediaStream);
         const track = stream.getVideoTracks()[0];
-        webcamTrackSenders[remoteUser] = pc.addTrack(track, stream);
+        webcamTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
     if (store.state.microphoneActive && store.state.microphoneStream) {
         // Same shit as the webcam
         const stream = (store.state.microphoneStream as MediaStream);
         const track = stream.getAudioTracks()[0];
-        microphoneTrackSenders[remoteUser] = pc.addTrack(track, stream);
+        microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
 
@@ -80,14 +80,14 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
     if (store.state.webcamActive && store.state.webcamStream) {
         const stream = (store.state.webcamStream as MediaStream);
         const track = stream.getVideoTracks()[0];
-        webcamTrackSenders[remoteUser] = pc.addTrack(track, stream);
+        webcamTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
     if (store.state.microphoneActive && store.state.microphoneStream) {
         // Same shit as the webcam
         const stream = (store.state.microphoneStream as MediaStream);
         const track = stream.getAudioTracks()[0];
-        microphoneTrackSenders[remoteUser] = pc.addTrack(track, stream);
+        microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
     await pc.setRemoteDescription(offer);
     const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
@@ -130,8 +130,9 @@ export function closeConnection(uuid: string) {
     // Also need to remove stream RTCRtpSenders
     delete webcamTrackSenders[uuid];
     delete microphoneTrackSenders[uuid];
-    // Need to remove tracks relevant to the user
+    // TODO Need to remove tracks relevant to the user
 
+    
 }
 
 export function closeAllConnections() {
@@ -165,7 +166,7 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
 
 function handleTrackEvent(event: RTCTrackEvent) {
     // When the remote adds a track
-    store.commit("addTrack", event.streams[0]);
+    store.commit("addStream", event.streams[0]);
 }
 
 function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string) {
@@ -185,11 +186,6 @@ function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string)
             }
         }))
     }
-}
-
-function handleRemoveTrackEvent() {
-    // When the remote removes a track
-
 }
 
 function handleICEConnectionStateChangeEvent(pc: RTCPeerConnection) {

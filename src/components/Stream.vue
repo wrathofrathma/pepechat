@@ -3,10 +3,14 @@
     class="flex items-center relative flex-col"
     @mouseenter="onHover"
     @mouseleave="onLeave"
+    :class="[containsVideo ? '' : 'hidden']"
     >
         <video :autoplay="true" class="video" :srcObject="stream" style="display: block;"></video>
         <div class="absolute bottom-0 bg-black bg-opacity-20 p-1 rounded-lg" v-if="hovering">
             {{username}}
+        </div>
+        <div>
+            {{containsVideo}}
         </div>
     </div>
 </template>
@@ -22,19 +26,24 @@ const props = defineProps({
         type: String,
         required: true
     },
-    streamType: {
+    streamKey: {
         type: String,
         required: true
     },
-    track: {
+    streamType: {
         type: String,
         required: true
     }
 })
 
-
-const stream = computed(() => store.getters.track(props.track));
+const stream = computed(() => store.getters.stream(props.streamKey));
 const username = computed(() => store.getters.username(props.streamUser));
+
+const containsVideo = computed(() => {
+    const roomId = store.state.route.params.id;
+    const room = store.state.rooms[roomId];
+    return room.streamState[props.streamUser].webcam;
+})
 
 const hovering = ref(false);
 const onHover = () => {
