@@ -9,9 +9,6 @@
         <div class="absolute bottom-0 bg-black bg-opacity-20 p-1 rounded-lg" v-if="hovering">
             {{username}}
         </div>
-        <div>
-            {{containsVideo}}
-        </div>
     </div>
 </template>
 

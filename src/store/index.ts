@@ -21,7 +21,10 @@ export default createStore({
         webcamActive: false,
         microphoneActive: false, 
         peerConnections: {}, // RTCPeerConnections
-        streams: {}, // Remote MediaStreams
+        streams: {}, // Remote MediaStreams,
+        mediaDevices: [],
+        webcamDevice: null,
+        microphoneDevice: null 
     },
 
     mutations: {
@@ -91,6 +94,12 @@ export default createStore({
         setMicrophone(state: any, microphone: MediaStream) {
             state.microphoneStream = microphone;
         },
+        setMediaDevices(state: any, devices: Array<MediaDeviceInfo>) {
+            state.mediaDevices = devices;
+        },
+        setWebcamDevice(state: any, device: MediaDeviceInfo) {
+            state.webcamDevice = device;
+        }
     },
     getters: {
         roomList(state: any) {
@@ -149,9 +158,26 @@ export default createStore({
         },
         stream: (state: any) => (uuid: string) => {
             return state.streams[uuid];
+        },
+        videoDevices: (state: any) => {
+            return state.mediaDevices.filter((val: MediaDeviceInfo) => val.kind === "videoinput");
+        },
+        audioDevices: (state: any) => {
+            return state.mediaDevices.filter((val: MediaDeviceInfo) => val.kind === "audioinput");
         }
     },
     actions: {
-        
+        async getMediaDevices({commit}) {
+            // getUserMedia() first to get permission to read devices
+            const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+            // Enumerate what devices are available
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            // kill the stream returned.
+            stream.getTracks().forEach((track) => {
+                track.stop()
+                stream.removeTrack(track);
+            });
+            commit("setMediaDevices", devices);
+        } 
     },
 })

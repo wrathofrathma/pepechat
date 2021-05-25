@@ -27,6 +27,13 @@ sock.onopen = (ev: Event) => {
 sock.onclose = (ev: Event) => {
   store.commit("setSocket", null);
 }
+
+// On app launch we want to fetch what media devices we're allowed to access and store them for fast context menus
+store.dispatch("getMediaDevices");
+// Also an event listener for new devices
+navigator.mediaDevices.ondevicechange = async (ev: Event) => {
+  store.dispatch("getMediaDevices");
+}
 </script>
 
 <style>
