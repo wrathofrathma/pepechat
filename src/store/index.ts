@@ -21,7 +21,7 @@ export default createStore({
         webcamActive: false,
         microphoneActive: false, 
         peerConnections: {}, // RTCPeerConnections
-        tracks: {}, // Remote MediaStreamTracks
+        tracks: {}, // Remote MediaStreams - Need to change this to reflect that
     },
 
     mutations: {
@@ -72,6 +72,9 @@ export default createStore({
         setPeerConnection(state: any, payload: {pc: RTCPeerConnection, user: string}) {
             const {user, pc} = payload;
             state.peerConnections[user] = pc;
+        },
+        removePeerConnection(state: any, uuid: string) {
+            delete state.peerConnections[uuid];
         },
         addTrack(state: any, track: MediaStreamTrack) {
             state.tracks[track.id] = track;

@@ -1,6 +1,6 @@
 import store from "../store";
 import type {RoomIndex, RoomEntry, Message} from "../scripts/types";
-import { addICECandidate, answerOffer, answerRenegotiation, initWebRTC, onAnswer, renegotiationAnswer } from "./webrtc";
+import { addICECandidate, answerOffer, answerRenegotiation, closeConnection, initWebRTC, onAnswer, renegotiationAnswer } from "./webrtc";
 
 /**
  * This is called when the server sends us our updated user credentials (username, avatar, uuid).
@@ -118,6 +118,10 @@ async function onRenegotiationAnswer(socket: WebSocket, payload: {target: string
     renegotiationAnswer(answer, sender);
 }
 
+function onRoomLeave({user}: {user: string}) {
+    closeConnection(user);
+}
+
 /**
  * Websocket message handler / router.
  * @param {WebSocket} ws Websocket
@@ -152,6 +156,10 @@ async function onMessage (this: WebSocket, ev: MessageEvent<any>): Promise<any>{
 
         case "room/info":
             onRoomInfo(data.payload.room);
+            break;
+
+        case "room/leave":
+            onRoomLeave(data.payload);
             break;
 
         case "ping":

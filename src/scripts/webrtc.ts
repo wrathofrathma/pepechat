@@ -120,6 +120,27 @@ export async function renegotiationAnswer(answer: RTCSessionDescriptionInit, rem
     await pc.setRemoteDescription(answer);
 }
 
+
+export function closeConnection(uuid: string) {
+    // Fetch the connection
+    const pc = (store.state.peerConnections[uuid] as RTCPeerConnection);
+    // Close it and remove it from the store
+    pc.close()
+    store.commit("removePeerConnection", uuid);
+    // Also need to remove stream RTCRtpSenders
+    delete webcamTrackSenders[uuid];
+    delete microphoneTrackSenders[uuid];
+    // Need to remove tracks relevant to the user
+
+}
+
+export function closeAllConnections() {
+    for (const [key, val] of Object.entries(store.state.peerConnections)) {
+        // Will this not cause loop/iterator issues since inside the loop we're removing stuff?
+        closeConnection(key);
+    }    
+}
+
 /************** WEBRTC EVENT HANDLERS **************/
 function handleConnectionStateChange(pc: RTCPeerConnection) {
     return () => {
