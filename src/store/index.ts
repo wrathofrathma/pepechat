@@ -24,7 +24,8 @@ export default createStore({
         streams: {}, // Remote MediaStreams,
         mediaDevices: [],
         webcamDevice: null,
-        microphoneDevice: null 
+        microphoneDevice: null,
+        userVolume: {}
     },
 
     mutations: {
@@ -102,6 +103,10 @@ export default createStore({
         },
         setMicrophoneDevice(state: any, device: MediaDeviceInfo) {
             state.microphoneDevice = device;
+        },
+        setUserVolume(state: any, payload: {user: string, volume: number}) {
+            const {user, volume} = payload;
+            state.userVolume[user] = volume;
         }
     },
     getters: {
