@@ -1,6 +1,6 @@
 <template>
     <div class="bg-green-400 w-full h-full">
-        <stream v-for="s in userMedia" :stream-user="s" stream-type="webcam"></stream>
+        <stream v-for="s in userMedia" :stream-user="s.user" :track="s.track" stream-type="webcam"></stream>
     </div>
 </template>
 

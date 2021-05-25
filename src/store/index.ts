@@ -16,13 +16,14 @@ export default createStore({
         windowTitle: "PepeChat",
         users: {},
         roomMessages: {},
-        userWebcamStreams: {},
-        userAudioStreams: {},
+        webcamStream: null, // MediaStream
+        microphoneStream: null, // MediaStream
         webcamActive: false,
-        microphoneActive: false,
-        peerConnections: {},
-        tracks: {},
+        microphoneActive: false, 
+        peerConnections: {}, // RTCPeerConnections
+        tracks: {}, // Remote MediaStreamTracks
     },
+
     mutations: {
         setAvatar(state: any, avatar: string) {
             state.avatar = avatar;
@@ -62,14 +63,6 @@ export default createStore({
                 state.roomMessages[room] = [];
             state.roomMessages[room].push(message);
         },
-        setUserWebcam(state: any, payload: {uuid: string, stream: MediaStream}) {
-            const {uuid, stream} = payload;
-            state.userWebcamStreams[uuid] = stream;
-        },
-        setUserAudio(state: any, payload: {uuid: string, stream: MediaStream}) {
-            const {uuid, stream} = payload;
-            state.userAudioStreams[uuid] = stream;
-        }, 
         setMicrophoneActive(state: any, mic: boolean) {
             state.microphoneActive = mic;
         },
@@ -82,10 +75,19 @@ export default createStore({
         },
         addTrack(state: any, track: MediaStreamTrack) {
             state.tracks[track.id] = track;
+            state.tracks = {
+                ...state.tracks
+            }
         },
         removeTrack(state: any, track: string) {
             delete state.tracks[track];
-        }
+        },
+        setWebcam(state: any, webcam: MediaStream) {
+            state.webcamStream = webcam;
+        },
+        setMicrophone(state: any, microphone: MediaStream) {
+            state.microphoneStream = microphone;
+        },
     },
     getters: {
         roomList(state: any) {
@@ -126,18 +128,18 @@ export default createStore({
             return ""
         },
         userWebcams: (state: any) => (room: string) => {
-            const streams: Array<string> = [];
+            const streams: Array<{user: string, track: string}> = [];
             if (!state.rooms[room]) {
                 return streams;
             }
             for (const [key, val] of Object.entries(state.rooms[room].streams)) {
-                if ((val as RoomStreamTracks).webcam)
-                    streams.push(key);
+                if ((val as {webcam: string}).webcam)
+                    streams.push({
+                        user: key, 
+                        track: (val as {webcam: string}).webcam
+                    });
             }
             return streams;
-        },
-        webcamStream: (state: any) => (uuid: string) => {
-            return state.userWebcamStreams[uuid];
         },
         peerConnection: (state: any) => (uuid: string) => {
             return state.peerConnections[uuid];

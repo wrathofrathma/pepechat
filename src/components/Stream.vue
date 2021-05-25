@@ -7,12 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed, onMounted, onUnmounted} from "vue";
+import {defineProps, computed} from "vue";
 
 import {useStore} from "vuex";
-import store from "../store";
-import {getUserWebcam} from "../scripts/streams";
 
+const store = useStore();
 const props = defineProps({
     streamUser: {
         type: String,
@@ -21,9 +20,13 @@ const props = defineProps({
     streamType: {
         type: String,
         required: true
+    },
+    track: {
+        type: String,
+        required: true
     }
 })
 
-const stream = computed(() => store.getters.webcamStream(props.streamUser));
 
+const stream = computed(() => store.getters.track(props.track));
 </script>
