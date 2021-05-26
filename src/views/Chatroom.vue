@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import Layout from "@/layouts/Default.vue"
-import UserList from "@/components/UserList.vue"
+import UserList from "@/components/UserList/UserList.vue"
 import RoomList from "@/components/RoomIndex/RoomList.vue"
 import Room from "@/components/Chatroom/Room.vue"
 

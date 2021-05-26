@@ -172,7 +172,31 @@ export default createStore({
         },
         audioDevices: (state: any) => {
             return state.mediaDevices.filter((val: MediaDeviceInfo) => val.kind === "audioinput");
-        }
+        },
+        userWebcamState: (state: any) => (roomId: string, user: string) => {
+            const room = state.rooms[roomId];
+            if (!room)
+                return false;
+            if (!room.streamState[user])
+                return false;
+            return room.streamState[user].webcam;
+        },
+        userMicrophoneState: (state: any) => (roomId: string, user: string) => {
+            const room = state.rooms[roomId];
+            if (!room)
+                return false;
+            if (!room.streamState[user])
+                return false;
+            return room.streamState[user].microphone;
+        },
+        userScreenshareState: (state: any) => (roomId: string, user: string) => {
+            const room = state.rooms[roomId];
+            if (!room)
+                return false;
+            if (!room.streamState[user])
+                return false;
+            return room.streamState[user].screenshare;
+        },
     },
     actions: {
         async getMediaDevices({commit}) {

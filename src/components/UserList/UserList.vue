@@ -9,19 +9,16 @@
             </div>
         </div>
         <div class="overflow-y-scroll h-full no-scrollbar">
-            <div v-for="user in users" class="flex flex-row items-center space-x-2">
-                <avatar class="h-12 w-12" :src="user.avatar"></avatar>
-                <p>{{user.username}}</p>
-            </div>
+            <user-row v-for="user in users" :user="user" :room-id="roomId" :row-type="tab"></user-row>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import Avatar from "@/components/atomic/Avatar.vue"
 import {computed, ref} from "vue";
 import {useStore} from "vuex";
-import type {User} from "../scripts/types";
+import type {User} from "../../scripts/types";
+import UserRow from "./UserRow.vue"
 
 const store = useStore();
 
@@ -29,23 +26,23 @@ const store = useStore();
 const roomId = computed(() => store.state.route.params.id);
 const tab = ref(store.state.route.params.id ? "room" : "index");
 
+/**
+ * Converts the dictionary of users in the store to a list of user keys.
+ */
 function removeDeadUsers(userDict: {[key: string]: User}) {
-    const newDict: {[key: string]: User} = {};
+    const newUsers = [];
     for (const [key, val] of Object.entries(userDict)) {
         if (!val.dead)
-            newDict[key] = val;
+            newUsers.push(key);
     }
-    return newDict;
+    return newUsers;
 }
 
 const users = computed(() => {
     if (tab.value === "index")
         return removeDeadUsers(store.state.users)
     else {
-        const uuids = store.getters.roomUsers(roomId.value);
-        return uuids.map((val: string) => {
-            return store.state.users[val];
-        });
+        return store.getters.roomUsers(roomId.value);
     }
 });
 </script>
