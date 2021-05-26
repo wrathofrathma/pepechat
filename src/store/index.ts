@@ -27,7 +27,8 @@ export default createStore({
         mediaDevices: [],
         webcamDevice: null,
         microphoneDevice: null,
-        userVolume: {}
+        userVolume: {},
+        userDisplayVolume: {},
     },
 
     mutations: {
@@ -115,7 +116,11 @@ export default createStore({
         setUserVolume(state: any, payload: {user: string, volume: number}) {
             const {user, volume} = payload;
             state.userVolume[user] = volume;
-        }
+        },
+        setUserDisplayVolume(state: any, payload: {user: string, volume: number}) {
+            const {user, volume} = payload;
+            state.userDisplayVolume[user] = volume;
+        },
     },
     getters: {
         roomList(state: any) {

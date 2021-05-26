@@ -24,15 +24,19 @@ const streamVolume = computed(() => {
         if (store.state.userVolume[props.streamUser])
             return store.state.userVolume[props.streamUser];
         return 100;
+    } else {
+        if (store.state.userDisplayVolume[props.streamUser])
+            return store.state.userDisplayVolume[props.streamUser];
+        return 100;
     }
-    // TODO - Add support for screenshare streams
-    return 100;
 });
 
 const setStreamVolume = (e: Event) => {
     const volume = (e.target as HTMLInputElement).value;
     if (props.streamType === "userMedia") {
         store.commit("setUserVolume", {user: props.streamUser, volume});
+    } else {
+        store.commit("setUserDisplayVolume", {user: props.streamUser, volume});
     }
 }
 </script>

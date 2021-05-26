@@ -82,8 +82,10 @@ const streamVolume = computed(() => {
         if (store.state.userVolume[props.streamUser])
             return store.state.userVolume[props.streamUser];
         return 100;
+    } else {
+        if (store.state.userDisplayVolume[props.streamUser])
+            return store.state.userDisplayVolume[props.streamUser];
+        return 100;
     }
-    // TODO - Add support for screenshare streams
-    return 100;
 });
 </script>
