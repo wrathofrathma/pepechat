@@ -46,10 +46,10 @@ const username = computed(() => store.getters.username(props.streamUser));
 const uuid = computed(() => store.state.uuid);
 
 const containsVideo = computed(() => {
-    if (props.streamType === "screenshare")
-        return true;
     const roomId = store.state.route.params.id;
     const room = store.state.rooms[roomId];
+    if (props.streamType === "screenshare")
+        return room.streamState[props.streamUser].screenshare;
     return room.streamState[props.streamUser].webcam;
 })
 
