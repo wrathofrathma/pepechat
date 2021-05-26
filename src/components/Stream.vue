@@ -10,7 +10,7 @@
         <div class="absolute bottom-0 bg-black bg-opacity-20 p-1 rounded-lg" v-if="hovering">
             {{username}}
         </div>
-        <div class="bg-black bg-opacity-50 w-full h-full z-10 absolute items-center justify-center flex flex-col space-y-2" v-if="contextMenuOpen">
+        <div class="bg-black bg-opacity-50 w-full h-full z-10 absolute items-center justify-center flex flex-col space-y-2" v-if="contextMenuOpen" v-click-outside="closeContextMenu">
             <div>
                 Stream Volume
             </div>
@@ -69,6 +69,10 @@ const onContextMenu = (e: Event) => {
         return;
     // Open the context menu
     contextMenuOpen.value = !contextMenuOpen.value;
+}
+
+const closeContextMenu = () => {
+    contextMenuOpen.value = false;
 }
 
 const streamVolume = computed(() => {
