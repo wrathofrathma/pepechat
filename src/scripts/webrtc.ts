@@ -1,6 +1,6 @@
 import adapter from "webrtc-adapter";
 import store from "../store";
-import {webcamTrackSenders, microphoneTrackSenders, userMediaStream} from "./streams";
+import {webcamTrackSenders, microphoneTrackSenders, userMediaStream, screenshareTrackSenders, screenshareStream} from "./streams";
 
 const ice_config = {
     sdpSemantics: "unified-plan",
@@ -21,10 +21,11 @@ const ice_config = {
 export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescriptionInit> {
     // Create peer connection with the ICE config
     const pc = new RTCPeerConnection(ice_config);
-    // Because we did the fix on the line below to gather ICE candidates immediately, sometimes our events trigger before our store commits causing a race event between
-    // The store saving the peer connection and the candidates gathering. Resulting in null peerconnection
+    // Save the peer connection so we can access it in other areas of the program.
     store.commit("setPeerConnection", {pc, user: remoteUser});
 
+    // Because we did the fix on the offer line to gather ICE candidates immediately, sometimes our events trigger before our store commits causing a race event between
+    // The store saving the peer connection and the candidates gathering. Resulting in null peerconnection
     const localUser = store.state.uuid;
     // Event handlers
     pc.onicecandidate = handleIceCandidateEvent(localUser, remoteUser);
@@ -49,6 +50,13 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
         microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
+    if (store.state.screenshareActive && store.state.screenshareStream) {
+        const stream = (store.state.screenshareStream as MediaStream);
+        screenshareTrackSenders[remoteUser] = [];
+        stream.getTracks().forEach((track) => {
+            screenshareTrackSenders[remoteUser].push(pc.addTrack(track, screenshareStream));
+        })
+    }
 
     // Generate an SDP offer of our capabilities
     // Necessary to offer to receive audio/video or else ICE candidates won't be gathered until a track is added.
@@ -56,7 +64,6 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     const offer = await pc.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: true});
     // Set it to our local description
     await pc.setLocalDescription(offer); 
-    // Save the peer connection so we can access it in other areas of the program.
 
     return offer;
 }
@@ -89,6 +96,15 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
         const track = stream.getAudioTracks()[0];
         microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
+
+    if (store.state.screenshareActive && store.state.screenshareStream) {
+        const stream = (store.state.screenshareStream as MediaStream);
+        screenshareTrackSenders[remoteUser] = [];
+        stream.getTracks().forEach((track) => {
+            screenshareTrackSenders[remoteUser].push(pc.addTrack(track, screenshareStream));
+        })
+    }
+
     await pc.setRemoteDescription(offer);
     const answer = await pc.createAnswer({offerToReceiveVideo: true, offerToReceiveAudio: true});
     await pc.setLocalDescription(answer);
@@ -131,8 +147,6 @@ export function closeConnection(uuid: string) {
     delete webcamTrackSenders[uuid];
     delete microphoneTrackSenders[uuid];
     // TODO Need to remove tracks relevant to the user
-
-    
 }
 
 export function closeAllConnections() {
@@ -167,6 +181,7 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
 function handleTrackEvent(event: RTCTrackEvent) {
     // When the remote adds a track
     store.commit("addStream", event.streams[0]);
+    console.log("Received a track", event);
 }
 
 function handleNegotiationNeededEvent(pc: RTCPeerConnection, remoteUser: string) {

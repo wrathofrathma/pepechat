@@ -5,11 +5,13 @@ import store from "../store";
 
 export const webcamTrackSenders: {[key: string]: RTCRtpSender} = {};
 export const microphoneTrackSenders: {[key: string]: RTCRtpSender} = {};
+export const screenshareTrackSenders: {[key: string]: Array<RTCRtpSender>} = {};
 
 // Separating this from the getUserMedia() creator so we have a consistent ID even if we turn off our webcam / etc.
 export const userMediaStream = new MediaStream();
 export const screenshareStream = new MediaStream();
 store.commit("addStream", userMediaStream);
+store.commit("addStream", screenshareStream)
 
 export function setStreamState() {
     const socket = store.state.socket as WebSocket;
@@ -21,7 +23,7 @@ export function setStreamState() {
             state: {
                 webcam: store.state.webcamActive,
                 microphone: store.state.microphoneActive,
-                screenshare: false
+                screenshare: store.state.screenshareActive
             },
             room
         }
@@ -88,6 +90,70 @@ export async function startMicrophone() {
         const pc = (val as RTCPeerConnection); 
         microphoneTrackSenders[key] = pc.addTrack(track, userMediaStream);
     }
+    setStreamState();
+}
+
+export async function startScreenshare() {
+    console.log("Starting screenshare")
+    // Set the state of our stream to streaming
+    store.commit("setScreenshareActive", true);
+    // Fetch our screenshare stream
+    // @ts-ignore
+    const stream = (await navigator.mediaDevices.getDisplayMedia({video: true, audio: true}) as MediaStream);
+    // Save it in the store.
+    store.commit("setScreenshare", stream);
+    // Attach the video stream to our local stream
+    stream.getVideoTracks().forEach((track) => {
+        screenshareStream.addTrack(track);
+    });
+    // attach it to every peer connection
+    for (const [key, val] of Object.entries(store.state.peerConnections)) {
+        const pc = (val as RTCPeerConnection); 
+        if (!screenshareTrackSenders[key])
+            screenshareTrackSenders[key] = [];
+        stream.getTracks().forEach((track) => {
+            screenshareTrackSenders[key].push(pc.addTrack(track, screenshareStream));
+        })
+    }
+    setStreamState();
+}
+
+export async function stopScreenshare() {
+    console.log("Stopping screenshare")
+    // Set the state of our stream to not streaming
+    store.commit("setScreenshareActive", false);
+    // Fetch the hardware stream
+    const stream = (store.state.screenshareStream as MediaStream);
+    // If it doesn't exist, we're probably not streaming, just stop here.
+    if (!stream)
+        return;
+    // Loop over each track
+    stream
+        .getTracks()
+        .forEach((track) => {
+            // Disable the track to paint it black / make it silent
+            track.enabled = false;
+            // Remove the local track
+            screenshareStream.removeTrack(track);
+            // Stop the track
+            track.stop();
+        })
+    // Remove all the tracks from our peers
+    for (const [key, val] of Object.entries(screenshareTrackSenders)) {
+        // Key is the uuid of the remoteUser
+        // val is the list of RTCRtpSender 
+        const pc = (store.state.peerConnections[key] as RTCPeerConnection);
+        // If the peer connection doesn't exist, we're not connected. just remove hte senders
+        if (!pc) {
+            delete screenshareTrackSenders[key];
+            continue;
+        }
+        // Loop through the senders and remove each track
+        for (const sender of val) {
+            pc.removeTrack(sender);
+        }
+    }
+    store.commit("setScreenshare", null);
     setStreamState();
 }
 

@@ -18,8 +18,10 @@ export default createStore({
         roomMessages: {},
         webcamStream: null, // MediaStream
         microphoneStream: null, // MediaStream
+        screenshareStream: null, // MediaStream
         webcamActive: false,
         microphoneActive: false, 
+        screenshareActive: false,
         peerConnections: {}, // RTCPeerConnections
         streams: {}, // Remote MediaStreams,
         mediaDevices: [],
@@ -73,6 +75,9 @@ export default createStore({
         setWebcamActive(state: any, webcam: boolean) {
             state.webcamActive = webcam;
         },
+        setScreenshareActive(state: any, screenshare: boolean) {
+            state.screenshareActive = screenshare;
+        },
         setPeerConnection(state: any, payload: {pc: RTCPeerConnection, user: string}) {
             const {user, pc} = payload;
             state.peerConnections[user] = pc;
@@ -94,6 +99,9 @@ export default createStore({
         },
         setMicrophone(state: any, microphone: MediaStream) {
             state.microphoneStream = microphone;
+        },
+        setScreenshare(state: any, screenshare: MediaStream) {
+            state.screenshareStream = screenshare;
         },
         setMediaDevices(state: any, devices: Array<MediaDeviceInfo>) {
             state.mediaDevices = devices;
@@ -157,6 +165,20 @@ export default createStore({
                     streams.push({
                         user: key, 
                         stream: (val as {userMedia: string}).userMedia
+                    });
+            }
+            return streams;
+        },
+        userDisplayMediaKeys: (state: any) => (room: string) => {
+            const streams: Array<{user: string, stream: string}> = [];
+            if (!state.rooms[room]) {
+                return streams;
+            }
+            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
+                if ((val as {screenshare: string}).screenshare)
+                    streams.push({
+                        user: key, 
+                        stream: (val as {screenshare: string}).screenshare
                     });
             }
             return streams;

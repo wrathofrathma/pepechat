@@ -1,6 +1,7 @@
 <template>
     <div class="w-full h-full grid grid-flow-row grid-cols-3 gap-4">
         <stream v-for="s in userMedia" :stream-user="s.user" :stream-key="s.stream" stream-type="userMedia"></stream>
+        <stream v-for="s in userScreens" :stream-user="s.user" :stream-key="s.stream" stream-type="screenshare"></stream>
     </div>
 </template>
 
@@ -13,4 +14,5 @@ const store = useStore();
 
 const room = computed(() => store.state.route.params.id);
 const userMedia = computed(() => store.getters.userMediaStreamKeys(room.value));
+const userScreens = computed(() => store.getters.userDisplayMediaKeys(room.value));
 </script>
