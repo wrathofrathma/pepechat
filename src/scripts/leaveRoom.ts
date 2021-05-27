@@ -1,5 +1,5 @@
 import HTTP from "../http";
-import { stopMicrophone, stopWebcam } from "./streams";
+import { stopMicrophone, stopScreenshare, stopWebcam } from "./streams";
 import {closeAllConnections} from "./webrtc";
 
 export default async function leaveRoom(roomId: string) {
@@ -7,6 +7,7 @@ export default async function leaveRoom(roomId: string) {
     closeAllConnections();
     await stopWebcam();
     await stopMicrophone();
+    await stopScreenshare();
     await HTTP().post(`/room/${roomId}/leave`)
         .then(() => {
             // Do nothing?
