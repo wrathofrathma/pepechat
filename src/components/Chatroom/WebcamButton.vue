@@ -21,13 +21,18 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, ref, defineProps} from "vue";
 import {useStore} from "vuex";
 import MediaControlButton from "./MediaControlButton.vue";
 import {startWebcam, stopWebcam, selectWebcam} from "../../scripts/streams";
-// import {getVideoDevices} from "../../scripts/streams";
 
 const store = useStore();
+const props = defineProps({
+    top: {
+        type: Number,
+        required: false,
+    }
+})
 
 // Is our webcam active? 
 const webcamActive = computed(() => store.state.webcamActive);
@@ -59,7 +64,7 @@ const closeContextMenu = () => {
 // Computed the context menu position styling
 const contextMenuStyle = computed(() => {
     return {
-        top: menuTop.value,
+        top: props.top? props.top : menuTop.value,
         left: menuLeft.value
     }
 })

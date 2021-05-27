@@ -21,6 +21,10 @@
             </div>
         </div>
         <div class="w-1/3 flex justify-end items-center">
+            <webcam-button v-if="roomId" top="0"></webcam-button>
+            <microphone-button v-if="roomId" top="0"></microphone-button>
+            <screenshare-button v-if="roomId"></screenshare-button>
+
             <v-button class="hover:bg-gray-600 hover:bg-opacity-10 p-2 rounded-full focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -35,6 +39,9 @@
 </template>
 
 <script setup lang="ts">
+import WebcamButton from "@/components/Chatroom/WebcamButton.vue";
+import MicrophoneButton from "@/components/Chatroom/MicrophoneButton.vue";
+import ScreenshareButton from "@/components/Chatroom/ScreenshareButton.vue";
 import Avatar from "@/components/atomic/Avatar.vue";
 import VButton from "@/components/atomic/VButton.vue"
 import rerollUsername from "../scripts/rerollUsername";
@@ -49,4 +56,5 @@ const username = computed(() => store.state.username);
 const userAvatar = computed(() => store.state.avatar)
 const title = computed(() => store.state.windowTitle);
 const selectorVisible = ref(false)
+const roomId = computed(() => store.state.route.params.id);
 </script>
