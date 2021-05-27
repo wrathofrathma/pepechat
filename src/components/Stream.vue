@@ -9,7 +9,7 @@
     @dblclick="onDoubleClick"
     ref="streamRef"
     >
-        <video :autoplay="true" :srcObject="stream" class="block flex-grow" :volume="streamVolume / 100"></video>
+        <video :autoplay="true" :srcObject="stream" class="block h-full" :volume="streamVolume / 100"></video>
         <div class="absolute bottom-0 bg-black bg-opacity-20 p-1 rounded-lg" v-if="hovering">
             {{username}}
         </div>

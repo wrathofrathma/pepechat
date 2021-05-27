@@ -1,46 +1,29 @@
 <template>
-    <div class="w-full h-full gap-4 grid grid-cols-12">
-        <stream 
-        v-for="s in userMedia" 
-        :stream-user="s.user" 
-        :stream-key="s.stream" 
-        stream-type="userMedia" 
-        :class="streamClasses(s.stream)"
-        ></stream>
-        <stream 
-        v-for="s in userScreens" 
-        :stream-user="s.user" 
-        :stream-key="s.stream" 
-        stream-type="screenshare"
-        :class="streamClasses(s.stream)"
-        ></stream>
-    </div>
+    <stream-primary-video-layout
+     v-if="primaryVideo" 
+     @select-primary="onSelectPrimary"
+    :primary-video="primaryVideo"
+    :primary-video-type="primaryVideoType"
+    :primary-video-user="primaryVideoUser"
+     ></stream-primary-video-layout>
+    <stream-grid-layout 
+    v-else 
+    @select-primary="onSelectPrimary"
+    ></stream-grid-layout>
 </template>
 
 <script setup lang="ts">
-import Stream from "@/components/Stream.vue";
-import {computed, ref} from "vue";
-import {useStore} from "vuex";
+import StreamPrimaryVideoLayout from "@/components/Chatroom/StreamPrimaryVideoLayout.vue";
+import StreamGridLayout from "@/components/Chatroom/StreamGridLayout.vue";
+import {ref} from "vue";
 
-const store = useStore();
-
-const room = computed(() => store.state.route.params.id);
-const userMedia = computed(() => store.getters.userMediaStreamKeys(room.value));
-const userScreens = computed(() => store.getters.userDisplayMediaKeys(room.value));
-const numberOfStreams = computed(() => store.getters.numberOfVideoStreams(room.value));
 const primaryVideo = ref("");
+const primaryVideoType = ref("");
+const primaryVideoUser = ref("");
 
-// Layout of the actual class
-function streamClasses(key: string) {
-    // Is not the selected video
-    let cols = "col-span-12";
-    if (numberOfStreams.value === 2)
-        cols = "col-span-6";
-    if (numberOfStreams.value >= 3)
-        cols = "col-span-4";
-    console.log(cols)
-    return [
-        cols
-    ]
+const onSelectPrimary = (key: string, user: string, videoType: string) => {
+    primaryVideo.value = key;
+    primaryVideoType.value = videoType;
+    primaryVideoUser.value = user;
 }
 </script>
