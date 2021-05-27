@@ -94,7 +94,6 @@ export async function startMicrophone() {
 }
 
 export async function startScreenshare() {
-    console.log("Starting screenshare")
     // Set the state of our stream to streaming
     store.commit("setScreenshareActive", true);
     // Fetch our screenshare stream
@@ -119,7 +118,6 @@ export async function startScreenshare() {
 }
 
 export async function stopScreenshare() {
-    console.log("Stopping screenshare")
     // Set the state of our stream to not streaming
     store.commit("setScreenshareActive", false);
     // Fetch the hardware stream

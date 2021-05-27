@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <!-- Contents -->
-        <div style="white-space: pre-wrap;" v-html="processedContents" class="message">
+        <div style="white-space: pre-wrap;" v-html="processedContents" class="message text-lg">
         </div>
         <!-- Embeded Images -->
         <img v-for="image in images" :src="image">
@@ -11,11 +11,14 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed, ref, watchEffect} from "vue";
+import {defineProps, computed, ref} from "vue";
+import {useStore} from "vuex";
 import marked from "marked";
 import * as linkify from "linkifyjs";
-import getEmote from "../../scripts/getEmote";
 import getVideoId from "get-video-id";
+
+
+const store = useStore();
 
 const props = defineProps({
     contents: {
@@ -43,6 +46,16 @@ function isImage(link: string) {
     return extensions.includes(extension);
 }
 
+function getEmote(text: string, nTokens: number) {
+    const key = text.substring(1, text.length-1).trim();
+    const emote = store.state.emotes[key];
+    const emoteSize = nTokens === 1 ? 16 : 8;
+    // Shit, getting closer to JSX every day >:(
+    if (emote)
+        return `<img src="${emote}" class="h-${emoteSize} inline-block">`;
+    return text;
+}
+
 const images = ref(Array<string>())
 const videos = ref(Array<string>())
 // So I was gonna do all of the parsing myself and then I found out about the marked javascript library
@@ -52,12 +65,14 @@ const videos = ref(Array<string>())
 const processedContents = computed(() => {
     // Tokenize
     let tokens = props.contents.split(' ');
+    const nTokens = props.contents.trim().split(' ').length;
     // Find our emotes by mapping to the tokens
     tokens = tokens.map((token) => {
         // Detect emotes
-        if (token.substring(0, 1) === ":" && token.substring(token.length-2, token.length-1) === ":") {
+        const cleanToken = token.trim();
+        if (cleanToken.substring(0, 1).trim() === ":" && cleanToken.substring(cleanToken.length-1, cleanToken.length).trim() === ":") {
             // If the first and last index are both :, then we have an emote
-            return getEmote(token);
+            return getEmote(cleanToken, nTokens);
         } 
         // Detect links using linkifyjs
         const link = linkify.find(token);
@@ -67,7 +82,6 @@ const processedContents = computed(() => {
         }
         // Detect if the link is a video
         if (link.length > 0) {
-            console.log("Testing if it's a video");
             const video = getVideoId(link[0].href)
             if (video.id) {
                 if (video.service === "youtube") {

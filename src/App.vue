@@ -34,6 +34,8 @@ store.dispatch("getMediaDevices");
 navigator.mediaDevices.ondevicechange = async (ev: Event) => {
   store.dispatch("getMediaDevices");
 }
+
+store.dispatch("fetchEmotes");
 </script>
 
 <style>

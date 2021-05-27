@@ -1,6 +1,7 @@
 import {createStore, storeKey} from 'vuex';
 import type {RoomIndex, Message, RoomEntry, RoomStreamTracks} from "../scripts/types";
 import lodash from "lodash";
+import getAvatarList from "../scripts/getAvatarList";
 
 export default createStore({
     strict: true,
@@ -29,6 +30,7 @@ export default createStore({
         microphoneDevice: null,
         userVolume: {},
         userDisplayVolume: {},
+        emotes: {}
     },
 
     mutations: {
@@ -121,6 +123,9 @@ export default createStore({
             const {user, volume} = payload;
             state.userDisplayVolume[user] = volume;
         },
+        setEmotes(state: any, emotes) {
+            state.emotes = emotes;
+        }
     },
     getters: {
         roomList(state: any) {
@@ -259,6 +264,22 @@ export default createStore({
                 stream.removeTrack(track);
             });
             commit("setMediaDevices", devices);
-        } 
+        }, 
+        async fetchEmotes({commit}) {
+            // Get links to all images on our server
+            const hrefs = await getAvatarList();
+            // Map the links to emote names
+            const emotes: {[key: string]: string} = {};
+            hrefs.forEach((href) => {
+                // First we split the link so we can fetch the filename at the end
+                const tokens = href.split("/");
+                const filename = tokens[tokens.length-1];
+                // Now we can split by . to remove the file extension
+                const emoteName = filename.split(".")[0];
+                emotes[emoteName] = href;
+            })
+
+            commit("setEmotes", emotes);
+        }
     },
 })
