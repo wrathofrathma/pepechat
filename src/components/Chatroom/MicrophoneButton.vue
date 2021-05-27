@@ -30,7 +30,7 @@ const store = useStore();
 
 const props = defineProps({
     top: {
-        type: Number,
+        type: String,
         required: false,
     }
 })

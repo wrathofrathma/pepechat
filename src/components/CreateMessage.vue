@@ -5,7 +5,6 @@
         @keyup.exact.enter="sendMessage"
         placeholder="Message"
         v-model="messageValue"
-        ref="chatbox"
         id="chatbox"
         >
         </text-field>
