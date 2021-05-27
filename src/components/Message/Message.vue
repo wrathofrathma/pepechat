@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-row space-x-2" ref="msg">
+    <div class="flex flex-row space-x-2 w-full" ref="msg">
         <avatar class="h-12 w-12" :src="userAvatar"></avatar>
-        <div class="flex flex-col">
+        <div class="flex flex-col w-full">
             <div class="flex flex-row space-x-2 text-sm">
                 <p class="font-bold">
                     {{username}}
@@ -10,9 +10,7 @@
                     {{timestamp}}
                 </p>
             </div>
-            <div style="white-space: pre-wrap;">
-                {{contents}}
-            </div>
+            <message-contents :contents="contents"></message-contents>
         </div>
     </div>
 </template>
@@ -21,7 +19,8 @@
 import {defineProps, computed, ref, onMounted, onBeforeUnmount} from "vue";
 import {useStore} from "vuex";
 import { format } from 'timeago.js';
-import Avatar from "@/components/atomic/Avatar.vue"
+import Avatar from "@/components/atomic/Avatar.vue";
+import MessageContents from "./MessageContents.vue";
 
 const store = useStore();
 

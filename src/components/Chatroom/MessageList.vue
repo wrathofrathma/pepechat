@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import Message from "@/components/Chatroom/Message.vue"
+import Message from "@/components/Message/Message.vue"
 
 import {defineProps, computed} from "vue";
 import {useStore} from "vuex";
