@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full bg-black flex-col justify-between" @mouseenter="onFocus" @mouseleave="onUnfocus">
+    <div class="flex h-1/2 bg-black flex-col justify-between" @mouseenter="onFocus" @mouseleave="onUnfocus">
         <!-- Streams layouts -->
         <stream-layout></stream-layout>
         <!-- User Media Controls -->
