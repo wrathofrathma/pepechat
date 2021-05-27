@@ -188,6 +188,28 @@ export default createStore({
             }
             return streams;
         },
+        numberOfVideoStreams: (state: any, getters: any) => (room: string) => {
+            let nStreams = 0;
+            // Get all user media stream keys and filter by whether they have 1+ video tracks.
+            nStreams += (getters.userMediaStreamKeys(room) as Array<{user: string, stream: string}>).filter((val) => {
+                const stream = (getters.stream(val.stream) as MediaStream);
+                if (!stream)
+                    return false;
+                if (stream.getVideoTracks().length > 0)
+                    return true;
+                return false;
+            }).length;
+            // Same shit for the user streams;
+            nStreams += (getters.userDisplayMediaKeys(room) as Array<{user: string, stream: string}>).filter((val) => {
+                const stream = (getters.stream(val.stream) as MediaStream);
+                if (!stream)
+                    return false;
+                if (stream.getVideoTracks().length > 0)
+                    return true;
+                return false;
+            }).length
+            return nStreams;
+        },
         peerConnection: (state: any) => (uuid: string) => {
             return state.peerConnections[uuid];
         },

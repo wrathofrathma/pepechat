@@ -1,10 +1,13 @@
 <template>
     <div 
-    class="flex items-center relative flex-col justify-center"
+    class="flex items-center relative flex-col justify-center w-full h-full"
     @mouseenter="onHover"
     @mouseleave="onLeave"
     :class="[containsVideo ? '' : 'hidden']"
     @contextmenu="onContextMenu"
+    @click="$emit('click', streamKey)"
+    @dblclick="onDoubleClick"
+    ref="streamRef"
     >
         <video :autoplay="true" :srcObject="stream" class="block flex-grow" :volume="streamVolume / 100"></video>
         <div class="absolute bottom-0 bg-black bg-opacity-20 p-1 rounded-lg" v-if="hovering">
@@ -20,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineProps, computed, ref} from "vue";
+import {defineProps, computed, ref, defineEmit} from "vue";
 import VolumeSlider from "@/components/Chatroom/VolumeSlider.vue";
 
 import {useStore} from "vuex";
@@ -41,6 +44,9 @@ const props = defineProps({
     }
 })
 
+defineEmit(["dbclick", "click"])
+
+const streamRef = ref();
 const stream = computed(() => store.getters.stream(props.streamKey));
 const username = computed(() => store.getters.username(props.streamUser));
 const uuid = computed(() => store.state.uuid);
@@ -60,6 +66,19 @@ const onHover = () => {
 
 const onLeave = () => {
     hovering.value = false;
+}
+
+const fullscreen = ref(false);
+
+const onDoubleClick = async () => {
+    if (!streamRef.value)
+        return;
+    
+    fullscreen.value = !fullscreen.value;
+    if (fullscreen.value)
+        await (streamRef.value as HTMLElement).requestFullscreen()
+    else
+        await document.exitFullscreen()
 }
 
 /*******  Context menu stuff *******/
