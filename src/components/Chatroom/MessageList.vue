@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col bg-gray-800 h-full w-full overflow-y-scroll no-scrollbar">
+    <div class="flex flex-col bg-gray-800 w-full overflow-y-scroll no-scrollbar">
         <div class="flex flex-row space-x-2 p-2" v-for="msg in roomMessages">
             <message :msg="msg"></message>
         </div>
