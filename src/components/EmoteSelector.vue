@@ -1,13 +1,13 @@
 <template>
     <div 
-    class="absolute w-96 h-96 z-10 bg-gray-900 rounded-md p-2 gap-2 grid grid-cols-6 overflow-y-scroll no-scrollbar"
+    class="absolute z-10 bg-gray-900 rounded-md p-2 gap-2 grid grid-cols-6 h-96 w-96 overflow-y-scroll no-scrollbar"
     v-click-outside="closeSelector"
     >
         <emote 
         v-for="(emhref, em) in emoteList" 
         :src="emhref"
         :name="em"
-        class="cursor-pointer hover:brightness-125 filter"
+        class="cursor-pointer hover:brightness-125 filter h-12 w-12"
         @click="$emit('selectEmote', em)"
         ></emote>
     </div>
