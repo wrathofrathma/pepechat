@@ -40,9 +40,9 @@ function removeDeadUsers(userDict: {[key: string]: User}) {
 
 const users = computed(() => {
     if (tab.value === "index")
-        return removeDeadUsers(store.state.users)
+        return removeDeadUsers(store.state.users.users)
     else {
-        return store.getters.roomUsers(roomId.value);
+        return store.getters["rooms/roomUsers"](roomId.value);
     }
 });
 </script>

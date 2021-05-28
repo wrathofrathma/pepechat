@@ -52,7 +52,7 @@ const questions = [
 const question = ref(Math.floor(Math.random() * 4));
 
 const roomId = computed(() => store.state.route.params.id);
-const roomName = computed(() => store.getters.roomName(roomId.value));
+const roomName = computed(() => store.getters["rooms/roomName"](roomId.value));
 const password = ref("");
 
 const submit = () => {

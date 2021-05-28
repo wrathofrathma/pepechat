@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
 })
 
 const username = computed(() => {
-    return store.getters.username(props.msg.userId);
+    return store.getters["users/username"](props.msg.userId);
 });
 
 const timestamp = ref(format(props.msg.timestamp));
@@ -56,7 +56,7 @@ const contents = computed(() => {
 })
 
 const userAvatar = computed(() => {
-    return store.getters.avatar(props.msg.userId);
+    return store.getters["users/avatar"](props.msg.userId);
 })
 
 </script>

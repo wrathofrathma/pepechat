@@ -74,9 +74,9 @@ const closeContextMenu = () => {
 
 const contextMenuOpen = ref(false);
 
-const username = computed(() => store.getters.username(props.user));
-const avatar = computed(() => store.getters.avatar(props.user));
-const webcamState = computed(() => store.getters.userWebcamState(props.roomId, props.user));
-const micState = computed(() => store.getters.userMicrophoneState(props.roomId, props.user));
-const screenshareState = computed(() => store.getters.userScreenshareState(props.roomId, props.user));
+const username = computed(() => store.getters["users/username"](props.user));
+const avatar = computed(() => store.getters["users/avatar"](props.user));
+const webcamState = computed(() => store.getters["rooms/userWebcamState"](props.roomId, props.user));
+const micState = computed(() => store.getters["rooms/userMicrophoneState"](props.roomId, props.user));
+const screenshareState = computed(() => store.getters["rooms/userScreenshareState"](props.roomId, props.user));
 </script>

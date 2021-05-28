@@ -55,7 +55,7 @@ defineEmit(["selectPrimary"])
 
 const room = computed(() => store.state.route.params.id);
 const userMedia = computed(() => {
-    return (store.getters.userMediaStreamKeys(room.value) as Array<{user: string, stream: string}>)
+    return (store.getters["streams/userMediaStreamKeys"](room.value) as Array<{user: string, stream: string}>)
         .filter((val) => {
             if (val.stream === props.primaryVideo)
                 return false;
@@ -63,7 +63,7 @@ const userMedia = computed(() => {
         })
 });
 const userScreens = computed(() => {
-    return (store.getters.userDisplayMediaKeys(room.value) as Array<{user: string, stream: string}>)
+    return (store.getters["streams/userDisplayMediaKeys"](room.value) as Array<{user: string, stream: string}>)
         .filter((val) => {
             if (val.stream === props.primaryVideo)
                 return false;

@@ -26,5 +26,5 @@ import {computed} from "vue";
 
 const store = useStore();
 
-const rooms = computed(() => store.getters["roomList"]);
+const rooms = computed(() => store.getters["rooms/roomList"]);
 </script>

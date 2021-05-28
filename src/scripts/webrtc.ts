@@ -146,13 +146,13 @@ export function closeConnection(uuid: string, streams: {userMedia: string, scree
     // Also need to remove stream RTCRtpSenders
     delete webcamTrackSenders[uuid];
     delete microphoneTrackSenders[uuid];
-    if (streams.userMedia && store.state.streams[streams.userMedia]) {
+    if (streams.userMedia && store.state.streams.streams[streams.userMedia]) {
         // TODO - Do we need to stop the tracks on the stream?
-        store.commit("removeStream", streams.userMedia);
+        store.commit("streams/removeStream", streams.userMedia);
     }
-    if (streams.screenshare && store.state.streams[streams.screenshare]) {
+    if (streams.screenshare && store.state.streams.streams[streams.screenshare]) {
         // TODO - Do we need to stop the tracks on the stream?
-        store.commit("removeStream", streams.screenshare);
+        store.commit("streams/removeStream", streams.screenshare);
     }
 }
 
@@ -162,9 +162,9 @@ export function closeAllConnections() {
         closeConnection(key);
     }    
     // Remove all streams that are not ours
-    for (const [key, val] of Object.entries(store.state.streams)) {
+    for (const [key, val] of Object.entries(store.state.streams.streams)) {
         if (key !== userMediaStream.id && key !== screenshareStream.id) {
-            store.commit("removeStream", key);
+            store.commit("streams/removeStream", key);
         }
     }
 }
@@ -193,7 +193,7 @@ function handleIceCandidateEvent(localUser: string, remoteUser: string) {
 
 function handleTrackEvent(event: RTCTrackEvent) {
     // When the remote adds a track
-    store.commit("addStream", event.streams[0]);
+    store.commit("streams/addStream", event.streams[0]);
     console.log("Received a track", event);
 }
 

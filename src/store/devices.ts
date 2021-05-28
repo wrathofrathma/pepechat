@@ -48,7 +48,12 @@ export default {
 
     },
     getters: {
-
+        videoDevices: (state: any) => {
+            return state.mediaDevices.filter((val: MediaDeviceInfo) => val.kind === "videoinput");
+        },
+        audioDevices: (state: any) => {
+            return state.mediaDevices.filter((val: MediaDeviceInfo) => val.kind === "audioinput");
+        },
     },
     actions: {
         async getMediaDevices({commit}: {commit: Commit}) {

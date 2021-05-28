@@ -30,7 +30,7 @@ const props = defineProps({
     }
 });
 
-const nVideos = computed(() => store.getters.numberOfVideoStreams(props.roomId));
+const nVideos = computed(() => store.getters["streams/numberOfVideoStreams"](props.roomId));
 
 const expanded = ref(false);
 const onExpand = () => {

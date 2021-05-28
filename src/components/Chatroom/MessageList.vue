@@ -21,5 +21,5 @@ const props = defineProps({
 
 const store = useStore();
 
-const roomMessages = computed(() => store.getters.roomMessages(props.roomId));
+const roomMessages = computed(() => store.getters["rooms/roomMessages"](props.roomId));
 </script>

@@ -12,7 +12,7 @@
             <!-- I had no fucking idea I could use store.getters in this binding. I wonder if something will break with this. -->
             <avatar 
             v-for="user in room.users" 
-            :src="store.getters.avatar(user)"
+            :src="store.getters['users/avatar'](user)"
             class="h-8 w-8"
             ></avatar>
         </div>

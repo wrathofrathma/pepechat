@@ -28,9 +28,9 @@ const store = useStore();
 defineEmit(["selectPrimary"])
 
 const room = computed(() => store.state.route.params.id);
-const userMedia = computed(() => store.getters.userMediaStreamKeys(room.value));
-const userScreens = computed(() => store.getters.userDisplayMediaKeys(room.value));
-const numberOfStreams = computed(() => store.getters.numberOfVideoStreams(room.value));
+const userMedia = computed(() => store.getters["streams/userMediaStreamKeys"](room.value));
+const userScreens = computed(() => store.getters["streams/userDisplayMediaKeys"](room.value));
+const numberOfStreams = computed(() => store.getters["streams/numberOfVideoStreams"](room.value));
 
 function streamClasses(key: string) {
     let cols = "col-span-12";

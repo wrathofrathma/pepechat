@@ -21,12 +21,12 @@ const store = useStore();
 
 const streamVolume = computed(() => {
     if (props.streamType === "userMedia") {
-        if (store.state.userVolume[props.streamUser])
-            return store.state.userVolume[props.streamUser];
+        if (store.state.streams.userVolume[props.streamUser])
+            return store.state.streams.userVolume[props.streamUser];
         return 100;
     } else {
-        if (store.state.userDisplayVolume[props.streamUser])
-            return store.state.userDisplayVolume[props.streamUser];
+        if (store.state.streams.userDisplayVolume[props.streamUser])
+            return store.state.streams.userDisplayVolume[props.streamUser];
         return 100;
     }
 });
@@ -34,9 +34,9 @@ const streamVolume = computed(() => {
 const setStreamVolume = (e: Event) => {
     const volume = (e.target as HTMLInputElement).value;
     if (props.streamType === "userMedia") {
-        store.commit("setUserVolume", {user: props.streamUser, volume});
+        store.commit("streams/setUserVolume", {user: props.streamUser, volume});
     } else {
-        store.commit("setUserDisplayVolume", {user: props.streamUser, volume});
+        store.commit("streams/setUserDisplayVolume", {user: props.streamUser, volume});
     }
 }
 </script>

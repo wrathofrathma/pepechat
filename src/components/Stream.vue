@@ -47,13 +47,13 @@ const props = defineProps({
 defineEmit(["dbclick", "click"])
 
 const streamRef = ref();
-const stream = computed(() => store.getters.stream(props.streamKey));
-const username = computed(() => store.getters.username(props.streamUser));
+const stream = computed(() => store.getters["streams/stream"](props.streamKey));
+const username = computed(() => store.getters["users/username"](props.streamUser));
 const uuid = computed(() => store.state.uuid);
 
 const containsVideo = computed(() => {
     const roomId = store.state.route.params.id;
-    const room = store.state.rooms[roomId];
+    const room = store.state.rooms.rooms[roomId];
     if (props.streamType === "screenshare")
         return room.streamState[props.streamUser].screenshare;
     return room.streamState[props.streamUser].webcam;
@@ -98,12 +98,12 @@ const closeContextMenu = () => {
 
 const streamVolume = computed(() => {
     if (props.streamType === "userMedia") {
-        if (store.state.userVolume[props.streamUser])
-            return store.state.userVolume[props.streamUser];
+        if (store.state.streams.userVolume[props.streamUser])
+            return store.state.streams.userVolume[props.streamUser];
         return 100;
     } else {
-        if (store.state.userDisplayVolume[props.streamUser])
-            return store.state.userDisplayVolume[props.streamUser];
+        if (store.state.streams.userDisplayVolume[props.streamUser])
+            return store.state.streams.userDisplayVolume[props.streamUser];
         return 100;
     }
 });

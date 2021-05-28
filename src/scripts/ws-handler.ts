@@ -30,26 +30,26 @@ function onToken(payload: {token: string}) {
 
 function onRoomIndex(payload: {rooms: RoomIndex}) {
     const {rooms} = payload;
-    store.commit("setRooms", rooms);
+    store.commit("rooms/setRooms", rooms);
 }
 
 function onUserIndex(payload: {users: Object}) {
     const {users} = payload;
-    store.commit("setUsers", users)
+    store.commit("users/setUsers", users)
 }
 
 function onRoomMessage(payload: {room: string, message: Message}) {
     const {message, room} = payload;
-    store.commit("addRoomMessage", {room, message});
+    store.commit("rooms/addRoomMessage", {room, message});
 }
 
 function onRoomHistory(payload: {room: string, history: Array<Message>}) {
     const {room, history} = payload;
-    store.commit("setRoomMessages", {room, messages: history})
+    store.commit("rooms/setRoomMessages", {room, messages: history})
 }
 
 function onRoomInfo(payload: {id: string, room: RoomEntry}) {
-    store.commit("setRoom", payload);
+    store.commit("rooms/setRoom", payload);
 }
 
 async function onInitWebRTC(sock: WebSocket, payload: {target: string}) {

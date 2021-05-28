@@ -33,7 +33,7 @@ watchEffect(() => {
     }
 
     roomId.value = id;
-    roomName.value = store.getters.roomName(id);
+    roomName.value = store.getters["rooms/roomName"](id);
 })
 
 watchEffect(() => {

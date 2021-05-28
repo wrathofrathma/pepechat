@@ -10,8 +10,8 @@ export const screenshareTrackSenders: {[key: string]: Array<RTCRtpSender>} = {};
 // Separating this from the getUserMedia() creator so we have a consistent ID even if we turn off our webcam / etc.
 export const userMediaStream = new MediaStream();
 export const screenshareStream = new MediaStream();
-store.commit("addStream", userMediaStream);
-store.commit("addStream", screenshareStream)
+store.commit("streams/addStream", userMediaStream);
+store.commit("streams/addStream", screenshareStream)
 
 export function setStreamState() {
     const socket = store.state.socket as WebSocket;
