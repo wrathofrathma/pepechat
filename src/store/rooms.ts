@@ -1,4 +1,4 @@
-import type {RoomIndex, Message, RoomEntry, RoomStreamTracks} from "../scripts/types";
+import type {RoomIndex, Message, RoomEntry} from "../scripts/types";
 
 export default {
     namespaced: true,

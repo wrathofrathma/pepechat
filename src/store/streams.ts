@@ -25,12 +25,12 @@ export default {
         },
     },
     getters: {
-        userMediaStreamKeys: (state: any) => (room: string) => {
+        userMediaStreamKeys: (state: any, getters: any, rootState: any) => (room: string) => {
             const streams: Array<{user: string, stream: string}> = [];
-            if (!state.rooms[room]) {
+            if (!rootState.rooms.rooms[room]) {
                 return streams;
             }
-            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
+            for (const [key, val] of Object.entries(rootState.rooms.rooms[room].streams)) {
                 if ((val as {userMedia: string}).userMedia)
                     streams.push({
                         user: key, 
@@ -39,12 +39,12 @@ export default {
             }
             return streams;
         },
-        userDisplayMediaKeys: (state: any) => (room: string) => {
+        userDisplayMediaKeys: (state: any, getters: any, rootState: any) => (room: string) => {
             const streams: Array<{user: string, stream: string}> = [];
-            if (!state.rooms[room]) {
+            if (!rootState.rooms.rooms[room]) {
                 return streams;
             }
-            for (const [key, val] of Object.entries(state.rooms[room].streams)) {
+            for (const [key, val] of Object.entries(rootState.rooms.rooms[room].streams)) {
                 if ((val as {screenshare: string}).screenshare)
                     streams.push({
                         user: key, 

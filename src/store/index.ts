@@ -1,6 +1,4 @@
-import {Commit, createStore, storeKey} from 'vuex';
-import type {RoomIndex, Message} from "../scripts/types";
-import lodash from "lodash";
+import {Commit, createStore} from 'vuex';
 import getAvatarList from "../scripts/getAvatarList";
 import devices from "./devices";
 import rooms from "./rooms";
