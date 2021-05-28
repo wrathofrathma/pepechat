@@ -1,7 +1,8 @@
-import {createStore, storeKey} from 'vuex';
+import {Commit, createStore, storeKey} from 'vuex';
 import type {RoomIndex, Message, RoomEntry, RoomStreamTracks} from "../scripts/types";
 import lodash from "lodash";
 import getAvatarList from "../scripts/getAvatarList";
+import devices from "./devices";
 
 export default createStore({
     strict: true,
@@ -10,24 +11,15 @@ export default createStore({
         avatar: "",
         uuid: "",
         socket: null,
-        // baseURL: "http://localhost:3000",
-        baseURL: "https://pepeserver.herokuapp.com",
+        baseURL: "http://localhost:3000",
+        // baseURL: "https://pepeserver.herokuapp.com",
         rooms: {},
         token: "",
         windowTitle: "PepeChat",
         users: {},
         roomMessages: {},
-        webcamStream: null, // MediaStream
-        microphoneStream: null, // MediaStream
-        screenshareStream: null, // MediaStream
-        webcamActive: false,
-        microphoneActive: false, 
-        screenshareActive: false,
         peerConnections: {}, // RTCPeerConnections
         streams: {}, // Remote MediaStreams,
-        mediaDevices: [],
-        webcamDevice: null,
-        microphoneDevice: null,
         userVolume: {},
         userDisplayVolume: {},
         emotes: {}
@@ -72,15 +64,6 @@ export default createStore({
                 state.roomMessages[room] = [];
             state.roomMessages[room].push(message);
         },
-        setMicrophoneActive(state: any, mic: boolean) {
-            state.microphoneActive = mic;
-        },
-        setWebcamActive(state: any, webcam: boolean) {
-            state.webcamActive = webcam;
-        },
-        setScreenshareActive(state: any, screenshare: boolean) {
-            state.screenshareActive = screenshare;
-        },
         setPeerConnection(state: any, payload: {pc: RTCPeerConnection, user: string}) {
             const {user, pc} = payload;
             state.peerConnections[user] = pc;
@@ -96,24 +79,6 @@ export default createStore({
         },
         removeStream(state: any, stream: string) {
             delete state.streams[stream];
-        },
-        setWebcam(state: any, webcam: MediaStream) {
-            state.webcamStream = webcam;
-        },
-        setMicrophone(state: any, microphone: MediaStream) {
-            state.microphoneStream = microphone;
-        },
-        setScreenshare(state: any, screenshare: MediaStream) {
-            state.screenshareStream = screenshare;
-        },
-        setMediaDevices(state: any, devices: Array<MediaDeviceInfo>) {
-            state.mediaDevices = devices;
-        },
-        setWebcamDevice(state: any, device: MediaDeviceInfo) {
-            state.webcamDevice = device;
-        },
-        setMicrophoneDevice(state: any, device: MediaDeviceInfo) {
-            state.microphoneDevice = device;
         },
         setUserVolume(state: any, payload: {user: string, volume: number}) {
             const {user, volume} = payload;
@@ -253,19 +218,7 @@ export default createStore({
         },
     },
     actions: {
-        async getMediaDevices({commit}) {
-            // getUserMedia() first to get permission to read devices
-            const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
-            // Enumerate what devices are available
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            // kill the stream returned.
-            stream.getTracks().forEach((track) => {
-                track.stop()
-                stream.removeTrack(track);
-            });
-            commit("setMediaDevices", devices);
-        }, 
-        async fetchEmotes({commit}) {
+        async fetchEmotes({commit}: {commit: Commit}) {
             // Get links to all images on our server
             const hrefs = await getAvatarList();
             // Map the links to emote names
@@ -282,4 +235,7 @@ export default createStore({
             commit("setEmotes", emotes);
         }
     },
+    modules: {
+        devices: devices
+    }
 })

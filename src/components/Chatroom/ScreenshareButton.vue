@@ -19,7 +19,7 @@ import {startScreenshare, stopScreenshare} from "../../scripts/streams";
 const store = useStore();
 
 // Is our screenshare active? 
-const screenshareActive = computed(() => store.state.screenshareActive);
+const screenshareActive = computed(() => store.state.devices.screenshareActive);
 
 /**
  * What happens when we right click the button. Launches our context menu

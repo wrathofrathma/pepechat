@@ -35,9 +35,9 @@ const props = defineProps({
 })
 
 // Is our webcam active? 
-const webcamActive = computed(() => store.state.webcamActive);
+const webcamActive = computed(() => store.state.devices.webcamActive);
 // List of video devices gathered from navigator.mediaDevices.enumerateDevices()
-const videoDevices = computed(() => store.getters.videoDevices);
+const videoDevices = computed(() => store.getters["devices/videoDevices"]);
 // Position of the click for our modal to be positioned at.
 const menuLeft = ref(0);
 const menuTop = ref(0);

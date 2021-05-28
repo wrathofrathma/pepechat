@@ -15,8 +15,8 @@ watchEffect(() => {
 // We want to open the socket here, so we don't close it when we move to the chatroom.
 import handler from "./scripts/ws-handler";
 
-// const sock = new WebSocket("ws://localhost:3000");
-const sock = new WebSocket("wss://pepeserver.herokuapp.com/");
+const sock = new WebSocket("ws://localhost:3000");
+// const sock = new WebSocket("wss://pepeserver.herokuapp.com/");
 
 sock.onmessage = handler;
 
@@ -29,10 +29,10 @@ sock.onclose = (ev: Event) => {
 }
 
 // On app launch we want to fetch what media devices we're allowed to access and store them for fast context menus
-store.dispatch("getMediaDevices");
+store.dispatch("devices/getMediaDevices");
 // Also an event listener for new devices
 navigator.mediaDevices.ondevicechange = async (ev: Event) => {
-  store.dispatch("getMediaDevices");
+  store.dispatch("devices/getMediaDevices");
 }
 
 store.dispatch("fetchEmotes");

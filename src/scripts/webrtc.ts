@@ -37,21 +37,21 @@ export async function initWebRTC(remoteUser: string): Promise<RTCSessionDescript
     pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
 
     // Attach relevant media streams if they exist
-    if (store.state.webcamActive && store.state.webcamStream) {
-        const stream = (store.state.webcamStream as MediaStream);
+    if (store.state.devices.webcamActive && store.state.devices.webcamStream) {
+        const stream = (store.state.devices.webcamStream as MediaStream);
         const track = stream.getVideoTracks()[0];
         webcamTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
-    if (store.state.microphoneActive && store.state.microphoneStream) {
+    if (store.state.devices.microphoneActive && store.state.devices.microphoneStream) {
         // Same shit as the webcam
-        const stream = (store.state.microphoneStream as MediaStream);
+        const stream = (store.state.devices.microphoneStream as MediaStream);
         const track = stream.getAudioTracks()[0];
         microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
-    if (store.state.screenshareActive && store.state.screenshareStream) {
-        const stream = (store.state.screenshareStream as MediaStream);
+    if (store.state.devices.screenshareActive && store.state.devices.screenshareStream) {
+        const stream = (store.state.devices.screenshareStream as MediaStream);
         screenshareTrackSenders[remoteUser] = [];
         stream.getTracks().forEach((track) => {
             screenshareTrackSenders[remoteUser].push(pc.addTrack(track, screenshareStream));
@@ -84,21 +84,21 @@ export async function answerOffer(offer: RTCSessionDescriptionInit, remoteUser: 
     pc.onnegotiationneeded = handleNegotiationNeededEvent(pc, remoteUser);
 
     // Attach relevant media streams if they exist
-    if (store.state.webcamActive && store.state.webcamStream) {
-        const stream = (store.state.webcamStream as MediaStream);
+    if (store.state.devices.webcamActive && store.state.devices.webcamStream) {
+        const stream = (store.state.devices.webcamStream as MediaStream);
         const track = stream.getVideoTracks()[0];
         webcamTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
-    if (store.state.microphoneActive && store.state.microphoneStream) {
+    if (store.state.devices.microphoneActive && store.state.devices.microphoneStream) {
         // Same shit as the webcam
-        const stream = (store.state.microphoneStream as MediaStream);
+        const stream = (store.state.devices.microphoneStream as MediaStream);
         const track = stream.getAudioTracks()[0];
         microphoneTrackSenders[remoteUser] = pc.addTrack(track, userMediaStream);
     }
 
-    if (store.state.screenshareActive && store.state.screenshareStream) {
-        const stream = (store.state.screenshareStream as MediaStream);
+    if (store.state.devices.screenshareActive && store.state.devices.screenshareStream) {
+        const stream = (store.state.devices.screenshareStream as MediaStream);
         screenshareTrackSenders[remoteUser] = [];
         stream.getTracks().forEach((track) => {
             screenshareTrackSenders[remoteUser].push(pc.addTrack(track, screenshareStream));
