@@ -31,7 +31,6 @@
                 </svg>
             </v-button>
         </div>
-        {{expanded}}
     </div>
 </template>
 
