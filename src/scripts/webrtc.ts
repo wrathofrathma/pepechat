@@ -137,7 +137,7 @@ export async function renegotiationAnswer(answer: RTCSessionDescriptionInit, rem
 }
 
 
-export function closeConnection(uuid: string) {
+export function closeConnection(uuid: string, streams: {userMedia: string, screenshare: string} = {userMedia: "", screenshare: ""}) {
     // Fetch the connection
     const pc = (store.state.peerConnections[uuid] as RTCPeerConnection);
     // Close it and remove it from the store
@@ -146,14 +146,27 @@ export function closeConnection(uuid: string) {
     // Also need to remove stream RTCRtpSenders
     delete webcamTrackSenders[uuid];
     delete microphoneTrackSenders[uuid];
-    // TODO Need to remove tracks relevant to the user
+    if (streams.userMedia && store.state.streams[streams.userMedia]) {
+        // TODO - Do we need to stop the tracks on the stream?
+        store.commit("removeStream", streams.userMedia);
+    }
+    if (streams.screenshare && store.state.streams[streams.screenshare]) {
+        // TODO - Do we need to stop the tracks on the stream?
+        store.commit("removeStream", streams.screenshare);
+    }
 }
 
 export function closeAllConnections() {
+    // Close all peer connections
     for (const [key, val] of Object.entries(store.state.peerConnections)) {
-        // Will this not cause loop/iterator issues since inside the loop we're removing stuff?
         closeConnection(key);
     }    
+    // Remove all streams that are not ours
+    for (const [key, val] of Object.entries(store.state.streams)) {
+        if (key !== userMediaStream.id && key !== screenshareStream.id) {
+            store.commit("removeStream", key);
+        }
+    }
 }
 
 /************** WEBRTC EVENT HANDLERS **************/

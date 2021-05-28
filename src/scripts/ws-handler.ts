@@ -118,8 +118,8 @@ async function onRenegotiationAnswer(socket: WebSocket, payload: {target: string
     renegotiationAnswer(answer, sender);
 }
 
-function onRoomLeave({user}: {user: string}) {
-    closeConnection(user);
+function onRoomLeave({user, streams}: {user: string, streams: {userMedia: string, screenshare: string}}) {
+    closeConnection(user, streams);
 }
 
 /**
