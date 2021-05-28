@@ -38,7 +38,7 @@ const props = defineProps({
 // Is our mic active? 
 const microphoneActive = computed(() => store.state.devices.microphoneActive);
 // List of audio devices gathered from navigator.mediaDevices.enumerateDevices()
-const audioDevices = computed(() => store.getters.audioDevices);
+const audioDevices = computed(() => store.getters["devices/audioDevices"]);
 // Position of the click for our modal to be positioned at.
 const menuLeft = ref(0);
 const menuTop = ref(0);
