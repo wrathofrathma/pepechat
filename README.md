@@ -7,8 +7,6 @@ Don't expect this to be done entirely well since this project was me *learning t
 ## What is pepechat?
 Pepechat is a meme flavored VoIP project centered around pepe the frog. There's no persistent storage, or account registration, just create public/private rooms to voice/video call & share your screen if that's your fancy.
 
-No idea how long I'll leave it up on heroku, but here's the live link for while it's still around.
-
 https://pepechat.web.app/#/
 
 ## Features

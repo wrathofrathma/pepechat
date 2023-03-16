@@ -16,7 +16,7 @@ watchEffect(() => {
 import handler from "./scripts/ws-handler";
 
 // const sock = new WebSocket("ws://localhost:3000");
-const sock = new WebSocket("wss://pepeserver.herokuapp.com/");
+const sock = new WebSocket("wss://pepeserver-fvd5z1k2l-wrathofrathma.vercel.app");
 
 sock.onmessage = handler;
 

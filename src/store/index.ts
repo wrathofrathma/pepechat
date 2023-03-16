@@ -13,7 +13,7 @@ export default createStore({
         uuid: "",
         socket: null,
         // baseURL: "http://localhost:3000",
-        baseURL: "https://pepeserver.herokuapp.com",
+        baseURL: "https://pepeserver-fvd5z1k2l-wrathofrathma.vercel.app",
         token: "",
         windowTitle: "PepeChat",
         peerConnections: {}, // RTCPeerConnections
